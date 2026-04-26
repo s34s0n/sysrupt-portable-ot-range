@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}Power Substation - SCADA HMI{% endblock %}
+{% block content %}
+<div class="dash-grid">
+    <div class="panel panel-main">
+        <h3>Power Substation - Single Line Diagram</h3>
+        <svg viewBox="0 0 900 400" class="process-svg">
+            <!-- Grid Supply -->
+            <text x="450" y="20" text-anchor="middle" class="svg-label" style="font-size:13px;">GRID SUPPLY 230V</text>
+            <line x1="450" y1="25" x2="450" y2="55" stroke="#ffaa00" stroke-width="3"/>
+
+            <!-- Main Breaker -->
+            <rect id="breaker-main-bg" x="415" y="55" width="70" height="40" fill="#0a2a0a" stroke="#00cc66" stroke-width="2" rx="3"/>
+            <text x="450" y="70" text-anchor="middle" class="svg-param" style="font-size:9px;">MAIN BRK</text>
+            <text id="breaker-main" x="450" y="88" text-anchor="middle" class="svg-value" style="font-size:14px; fill:#00cc66;">CLOSED</text>
+            <line x1="450" y1="95" x2="450" y2="125" stroke="#ffaa00" stroke-width="3"/>
+
+            <!-- Bus Bar -->
+            <line x1="150" y1="125" x2="750" y2="125" stroke="#ffaa00" stroke-width="4"/>
+            <text x="80" y="129" class="svg-param" style="font-size:10px;">BUS A</text>
+
+            <!-- Bus Tie -->
+            <line x1="450" y1="125" x2="450" y2="155" stroke="#ffaa00" stroke-width="2"/>
+            <rect id="breaker-bustie-bg" x="415" y="155" width="70" height="35" fill="#0a1a0a" stroke="#666" stroke-width="1" rx="3"/>
+            <text x="450" y="168" text-anchor="middle" class="svg-param" style="font-size:9px;">BUS TIE</text>
+            <text id="breaker-bustie" x="450" y="183" text-anchor="middle" class="svg-value" style="font-size:12px; fill:#666;">OPEN</text>
+            <line x1="450" y1="190" x2="450" y2="210" stroke="#666" stroke-width="2" stroke-dasharray="4"/>
+            <line x1="150" y1="210" x2="750" y2="210" stroke="#666" stroke-width="2" stroke-dasharray="4"/>
+            <text x="80" y="214" class="svg-param" style="font-size:10px;">BUS B</text>
+
+            <!-- Feeder A -->
+            <line x1="250" y1="125" x2="250" y2="245" stroke="#ffaa00" stroke-width="2"/>
+            <rect id="breaker-fa-bg" x="215" y="245" width="70" height="35" fill="#0a2a0a" stroke="#00cc66" stroke-width="1" rx="3"/>
+            <text x="250" y="258" text-anchor="middle" class="svg-param" style="font-size:9px;">FEEDER A</text>
+            <text id="breaker-fa" x="250" y="273" text-anchor="middle" class="svg-value" style="font-size:12px; fill:#00cc66;">CLOSED</text>
+            <line x1="250" y1="280" x2="250" y2="310" stroke="#ffaa00" stroke-width="2"/>
+            <text x="250" y="325" text-anchor="middle" class="svg-param" style="font-size:10px;">INTAKE PUMPS</text>
+
+            <!-- Feeder B -->
+            <line x1="650" y1="125" x2="650" y2="245" stroke="#ffaa00" stroke-width="2"/>
+            <rect id="breaker-fb-bg" x="615" y="245" width="70" height="35" fill="#0a2a0a" stroke="#00cc66" stroke-width="1" rx="3"/>
+            <text x="650" y="258" text-anchor="middle" class="svg-param" style="font-size:9px;">FEEDER B</text>
+            <text id="breaker-fb" x="650" y="273" text-anchor="middle" class="svg-value" style="font-size:12px; fill:#00cc66;">CLOSED</text>
+            <line x1="650" y1="280" x2="650" y2="310" stroke="#ffaa00" stroke-width="2"/>
+            <text x="650" y="325" text-anchor="middle" class="svg-param" style="font-size:10px;">DOSING + FILTERS</text>
+
+            <!-- Measurements -->
+            <rect x="30" y="260" width="150" height="120" fill="none" stroke="#4488ff" stroke-width="1" rx="3"/>
+            <text x="105" y="280" text-anchor="middle" class="svg-label" style="font-size:11px;">MEASUREMENTS</text>
+            <text x="45" y="300" class="svg-param">Voltage:</text>
+            <text id="val-voltage" x="165" y="300" text-anchor="end" class="svg-value" style="font-size:14px;">230.0 V</text>
+            <text x="45" y="320" class="svg-param">Current:</text>
+            <text id="val-current" x="165" y="320" text-anchor="end" class="svg-value">42.5 A</text>
+            <text x="45" y="340" class="svg-param">Power:</text>
+            <text id="val-power" x="165" y="340" text-anchor="end" class="svg-value">9200 W</text>
+            <text x="45" y="360" class="svg-param">Frequency:</text>
+            <text id="val-freq" x="165" y="360" text-anchor="end" class="svg-value">50.00 Hz</text>
+
+            <!-- Blackout overlay -->
+            <rect id="blackout" x="0" y="0" width="900" height="400" fill="black" opacity="0" style="pointer-events:none;"/>
+            <text id="blackout-text" x="450" y="200" text-anchor="middle" style="fill:#ff0000; font-size:36px; font-family:Consolas,monospace; font-weight:700; display:none;">BLACKOUT</text>
+
+            <!-- Flag -->
+            <rect id="flag-box" x="300" y="340" width="350" height="55" fill="#0a2a0a" stroke="#00ff66" stroke-width="3" rx="5" style="display:none;"/>
+            <text id="flag-title" x="475" y="360" text-anchor="middle" style="fill:#00ff66; font-size:14px; font-family:Consolas,monospace; font-weight:700; display:none;"></text>
+            <text id="flag-text" x="475" y="382" text-anchor="middle" style="fill:#00ff66; font-size:16px; font-family:Consolas,monospace; font-weight:700; display:none;"></text>
+        </svg>
+    </div>
+
+    <div class="panel panel-side">
+        <div class="status-card">
+            <h4>Substation Status</h4>
+            <div class="status-row"><span>Main Breaker</span><span id="side-main" class="val-ok">CLOSED</span></div>
+            <div class="status-row"><span>Bus Tie</span><span id="side-bustie" class="val-dim">OPEN</span></div>
+            <div class="status-row"><span>Feeder A</span><span id="side-fa" class="val-ok">CLOSED</span></div>
+            <div class="status-row"><span>Feeder B</span><span id="side-fb" class="val-ok">CLOSED</span></div>
+            <div class="status-row"><span>Voltage</span><span id="side-voltage" class="val-ok">230.0 V</span></div>
+            <div class="status-row"><span>Frequency</span><span id="side-freq" class="val-ok">50.00 Hz</span></div>
+        </div>
+        <div class="status-card">
+            <h4>IEC 60870-5-104</h4>
+            <div class="status-row"><span>IOA 100</span><span class="val-dim">Main Breaker</span></div>
+            <div class="status-row"><span>IOA 101</span><span class="val-dim">Bus Tie</span></div>
+            <div class="status-row"><span>IOA 102</span><span class="val-dim">Feeder A</span></div>
+            <div class="status-row"><span>IOA 103</span><span class="val-dim">Feeder B</span></div>
+            <div class="status-row"><span>IOA 400</span><span class="val-dim">Breaker Cmd</span></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    var solved = false;
+    var blackoutShown = false;
+
+    function update() {
+        fetch('/api/power')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                var main = d.main_breaker;
+                var bustie = d.bus_tie;
+                var fa = d.feeder_a;
+                var fb = d.feeder_b;
+                var voltage = d.voltage || 230;
+                var current = d.current || 42.5;
+                var power = d.power || 9200;
+                var freq = d.frequency || 50.0;
+
+                // Breaker states
+                function setBreaker(id, bgId, sideId, closed) {
+                    var el = document.getElementById(id);
+                    var bg = document.getElementById(bgId);
+                    var side = document.getElementById(sideId);
+                    if (closed) {
+                        el.textContent = 'CLOSED';
+                        el.style.fill = '#00cc66';
+                        bg.setAttribute('stroke', '#00cc66');
+                        if (side) { side.textContent = 'CLOSED'; side.className = 'val-ok'; }
+                    } else {
+                        el.textContent = 'OPEN';
+                        el.style.fill = '#ff4444';
+                        bg.setAttribute('stroke', '#ff4444');
+                        if (side) { side.textContent = 'OPEN'; side.className = 'val-danger'; }
+                    }
+                }
+
+                setBreaker('breaker-main', 'breaker-main-bg', 'side-main', main);
+                setBreaker('breaker-bustie', 'breaker-bustie-bg', 'side-bustie', bustie);
+                setBreaker('breaker-fa', 'breaker-fa-bg', 'side-fa', fa);
+                setBreaker('breaker-fb', 'breaker-fb-bg', 'side-fb', fb);
+
+                // Measurements
+                document.getElementById('val-voltage').textContent = voltage.toFixed(1) + ' V';
+                document.getElementById('val-current').textContent = current.toFixed(1) + ' A';
+                document.getElementById('val-power').textContent = power.toFixed(0) + ' W';
+                document.getElementById('val-freq').textContent = freq.toFixed(2) + ' Hz';
+                document.getElementById('side-voltage').textContent = voltage.toFixed(1) + ' V';
+                document.getElementById('side-freq').textContent = freq.toFixed(2) + ' Hz';
+
+                // Voltage color
+                var vEl = document.getElementById('val-voltage');
+                var svEl = document.getElementById('side-voltage');
+                if (voltage < 100) {
+                    vEl.style.fill = '#ff4444';
+                    if (svEl) svEl.className = 'val-danger';
+                } else if (voltage < 200) {
+                    vEl.style.fill = '#ffaa00';
+                    if (svEl) svEl.className = 'val-warn';
+                } else {
+                    vEl.style.fill = '#00cc66';
+                    if (svEl) svEl.className = 'val-ok';
+                }
+
+                // Blackout effect when main breaker opens
+                if (!main && !blackoutShown) {
+                    blackoutShown = true;
+                    var bo = document.getElementById('blackout');
+                    var bt = document.getElementById('blackout-text');
+                    bo.setAttribute('opacity', '0.85');
+                    bt.style.display = 'block';
+                    setTimeout(function() {
+                        bo.setAttribute('opacity', '0');
+                        bt.style.display = 'none';
+                    }, 3000);
+                }
+                if (main) blackoutShown = false;
+
+                // Flag from server
+                if (d.flag && !solved) {
+                    solved = true;
+                    document.getElementById('flag-box').style.display = 'block';
+                    document.getElementById('flag-title').style.display = 'block';
+                    document.getElementById('flag-title').textContent = 'CHALLENGE 7 COMPLETE!';
+                    document.getElementById('flag-text').style.display = 'block';
+                    document.getElementById('flag-text').textContent = d.flag;
+                }
+            })
+            .catch(function() {});
+    }
+
+    setInterval(update, 1000);
+    update();
+})();
+</script>
+{% endblock %}

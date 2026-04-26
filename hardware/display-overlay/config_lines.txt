@@ -1,0 +1,3 @@
+# Display-related lines from /boot/firmware/config.txt
+dtoverlay=sysrupt-ili9341-spi1
+max_framebuffers=2

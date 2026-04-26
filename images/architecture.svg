@@ -1,0 +1,612 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1580" font-family="'JetBrains Mono', 'Fira Code', ui-monospace, monospace">
+  <defs>
+    <!-- Background with subtle depth -->
+    <radialGradient id="bg" cx="50%" cy="30%" r="90%">
+      <stop offset="0%" stop-color="#131936"/>
+      <stop offset="60%" stop-color="#0a0e1f"/>
+      <stop offset="100%" stop-color="#05070f"/>
+    </radialGradient>
+
+    <!-- Fine grid -->
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#1a2340" stroke-width="0.4" opacity="0.4"/>
+    </pattern>
+
+    <!-- Scanline overlay for industrial feel -->
+    <pattern id="scanlines" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="2" fill="#000" opacity="0.04"/>
+    </pattern>
+
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+
+    <!-- Arrow markers -->
+    <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4ade80"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fbbf24"/>
+    </marker>
+
+    <!-- Firewall shield -->
+    <symbol id="shield" viewBox="0 0 32 32">
+      <path d="M16 2 L28 6 V14 C28 22 22.5 28.5 16 30 C9.5 28.5 4 22 4 14 V6 Z"
+            fill="#0a0f1f" stroke="#64ffda" stroke-width="1.8"/>
+      <path d="M10 16 L14 20 L22 11" fill="none" stroke="#64ffda" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- Laptop (attacker) -->
+    <symbol id="laptop" viewBox="0 0 32 32">
+      <rect x="4" y="5" width="24" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <rect x="6.5" y="7.5" width="19" height="11" fill="currentColor" opacity="0.12"/>
+      <path d="M2 23 H30 L27 27 H5 Z" fill="currentColor" opacity="0.4" stroke="currentColor" stroke-width="1.4"/>
+      <!-- Terminal prompt detail -->
+      <text x="9" y="13" font-family="monospace" font-size="3" fill="currentColor" opacity="0.9">&gt;_</text>
+      <line x1="9" y1="15.5" x2="22" y2="15.5" stroke="currentColor" stroke-width="0.4" opacity="0.6"/>
+      <line x1="9" y1="17" x2="18" y2="17" stroke="currentColor" stroke-width="0.4" opacity="0.6"/>
+    </symbol>
+
+    <!-- Server rack -->
+    <symbol id="server" viewBox="0 0 32 32">
+      <rect x="5" y="6" width="22" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <rect x="5" y="18" width="22" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="9" cy="10" r="1" fill="currentColor"/>
+      <circle cx="9" cy="22" r="1" fill="currentColor"/>
+      <rect x="13" y="9" width="11" height="0.8" fill="currentColor" opacity="0.8"/>
+      <rect x="13" y="11" width="8" height="0.8" fill="currentColor" opacity="0.5"/>
+      <rect x="13" y="21" width="11" height="0.8" fill="currentColor" opacity="0.8"/>
+      <rect x="13" y="23" width="8" height="0.8" fill="currentColor" opacity="0.5"/>
+    </symbol>
+
+    <!-- PLC industrial controller -->
+    <symbol id="plc" viewBox="0 0 32 32">
+      <rect x="4" y="4" width="24" height="24" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <!-- Status LEDs row -->
+      <circle cx="8" cy="8" r="1" fill="currentColor" opacity="0.9"/>
+      <circle cx="12" cy="8" r="1" fill="currentColor" opacity="0.5"/>
+      <circle cx="16" cy="8" r="1" fill="currentColor" opacity="0.9"/>
+      <circle cx="20" cy="8" r="1" fill="currentColor" opacity="0.3"/>
+      <circle cx="24" cy="8" r="1" fill="currentColor" opacity="0.7"/>
+      <!-- Display area -->
+      <rect x="7" y="12" width="18" height="6" fill="currentColor" opacity="0.15" stroke="currentColor" stroke-width="0.5"/>
+      <!-- I/O terminals -->
+      <rect x="7" y="21" width="2" height="4" fill="currentColor" opacity="0.6"/>
+      <rect x="10" y="21" width="2" height="4" fill="currentColor" opacity="0.6"/>
+      <rect x="13" y="21" width="2" height="4" fill="currentColor" opacity="0.6"/>
+      <rect x="16" y="21" width="2" height="4" fill="currentColor" opacity="0.6"/>
+      <rect x="19" y="21" width="2" height="4" fill="currentColor" opacity="0.6"/>
+      <rect x="22" y="21" width="2" height="4" fill="currentColor" opacity="0.6"/>
+    </symbol>
+
+    <!-- HMI panel -->
+    <symbol id="hmi" viewBox="0 0 32 32">
+      <rect x="3" y="5" width="26" height="19" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <rect x="5" y="7" width="22" height="15" fill="currentColor" opacity="0.15"/>
+      <!-- Schematic elements inside -->
+      <circle cx="10" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+      <line x1="12" y1="12" x2="18" y2="12" stroke="currentColor" stroke-width="0.8"/>
+      <rect x="18" y="10.5" width="5" height="3" fill="none" stroke="currentColor" stroke-width="0.8"/>
+      <line x1="8" y1="17" x2="24" y2="17" stroke="currentColor" stroke-width="0.6" opacity="0.7"/>
+      <!-- Stand -->
+      <path d="M12 24 L12 27 L20 27 L20 24" fill="none" stroke="currentColor" stroke-width="1.3"/>
+      <line x1="10" y1="27" x2="22" y2="27" stroke="currentColor" stroke-width="1.3"/>
+    </symbol>
+
+    <!-- Zone gradients -->
+    <linearGradient id="z-corp" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.06"/>
+      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="z-dmz" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.06"/>
+      <stop offset="50%" stop-color="#fbbf24" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="z-scada" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fb923c" stop-opacity="0.06"/>
+      <stop offset="50%" stop-color="#fb923c" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#fb923c" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="z-proc" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.06"/>
+      <stop offset="50%" stop-color="#ef4444" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="z-safe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#991b1b" stop-opacity="0.12"/>
+      <stop offset="50%" stop-color="#991b1b" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#991b1b" stop-opacity="0.12"/>
+    </linearGradient>
+
+    <!-- Device card background for depth -->
+    <linearGradient id="card-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0a0f1f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ========== BACKGROUND LAYERS ========== -->
+  <rect width="1600" height="1580" fill="url(#bg)"/>
+  <rect width="1600" height="1580" fill="url(#grid)"/>
+  <rect width="1600" height="1580" fill="url(#scanlines)"/>
+
+  <!-- Decorative corner brackets -->
+  <g stroke="#64ffda" stroke-width="1.2" fill="none" opacity="0.45">
+    <path d="M 24 24 L 24 72 M 24 24 L 72 24"/>
+    <path d="M 1576 24 L 1576 72 M 1576 24 L 1528 24"/>
+    <path d="M 24 1556 L 24 1508 M 24 1556 L 72 1556"/>
+    <path d="M 1576 1556 L 1576 1508 M 1576 1556 L 1528 1556"/>
+  </g>
+
+  <!-- ========== HEADER ========== -->
+  <g>
+    <text x="80" y="100" font-size="48" font-weight="800" fill="#e6f1ff" letter-spacing="6">
+      SYSRUPT<tspan fill="#64ffda" dx="6">//</tspan><tspan dx="6">PORTABLE OT RANGE</tspan>
+    </text>
+    <text x="80" y="134" font-size="13" fill="#8892b0" letter-spacing="5">
+      ICS / SCADA  ·  CYBERSECURITY TRAINING RANGE  ·  IEC 62443 PURDUE MODEL
+    </text>
+    <!-- Accent underline -->
+    <line x1="80" y1="150" x2="300" y2="150" stroke="#64ffda" stroke-width="2"/>
+    <line x1="305" y1="150" x2="340" y2="150" stroke="#64ffda" stroke-width="2" opacity="0.5"/>
+    <line x1="345" y1="150" x2="360" y2="150" stroke="#64ffda" stroke-width="2" opacity="0.25"/>
+  </g>
+
+  <!-- ========== ATTACKER LAPTOP ========== -->
+  <g transform="translate(80, 185)">
+    <!-- Glow halo behind laptop -->
+    <circle cx="42" cy="42" r="60" fill="#64ffda" opacity="0.08" filter="url(#glow)"/>
+    <circle cx="42" cy="42" r="44" fill="none" stroke="#64ffda" stroke-width="0.5" opacity="0.3" stroke-dasharray="2 3"/>
+
+    <g color="#64ffda">
+      <use href="#laptop" x="0" y="0" width="84" height="84"/>
+    </g>
+
+    <text x="110" y="34" font-size="20" fill="#e6f1ff" font-weight="800" letter-spacing="3">ATTACKER</text>
+    <text x="110" y="58" font-size="20" fill="#64ffda" font-weight="800" letter-spacing="3">LAPTOP</text>
+    <text x="110" y="80" font-size="11" fill="#8892b0" letter-spacing="1">DHCP · 10.0.1.50-200 · eth0</text>
+  </g>
+
+  <!-- Connection line from laptop down into Corporate zone -->
+  <g>
+    <path d="M 122 275 L 122 310" stroke="#64ffda" stroke-width="2.5" stroke-dasharray="4 3" opacity="0.8"/>
+    <circle cx="122" cy="310" r="4" fill="#64ffda"/>
+    <circle cx="122" cy="310" r="8" fill="none" stroke="#64ffda" stroke-width="1" opacity="0.4"/>
+    <text x="132" y="296" font-size="10" fill="#64ffda" letter-spacing="2" font-weight="600">ETH0 ▸</text>
+  </g>
+
+  <!--
+    LAYOUT (vertical 1400px canvas):
+      Corporate   y=310  h=150   (ends 460)
+      Gutter      460..560  firewall y=510
+      DMZ         y=560  h=150   (ends 710)
+      Gutter      710..810  firewall y=760
+      SCADA       y=810  h=160   (ends 970)
+      Gutter      970..1070 firewall y=1020
+      Process     y=1070 h=190  (ends 1260)
+      Gutter      1260..1310 air-gap
+      Safety      y=1310 h=... — wait, that's off canvas. Let me recompute.
+
+    CANVAS 1600x1400. Reserve: header 0..170, footer 1350..1400.
+    Usable: 170..1350 = 1180px.
+    Laptop: 185..275 = 90px
+    From 310 downward: 1040px for 5 zones + 4 gutters.
+    Try: Corp 130, DMZ 130, SCADA 140, Proc 200, Safety 130 = 730
+    4 gutters of 75 = 300. Total = 1030. Fits!
+
+    FINAL:
+      Corp     y=310  h=130  (ends 440)
+      gutter   440..515 (75) firewall y=477
+      DMZ      y=515  h=130  (ends 645)
+      gutter   645..720 (75) firewall y=682
+      SCADA    y=720  h=140  (ends 860)
+      gutter   860..935 (75) firewall y=897
+      Process  y=935  h=200  (ends 1135)
+      gutter   1135..1210 (75) air-gap
+      Safety   y=1210 h=130  (ends 1340)
+  -->
+
+  <!-- ================== CORPORATE ZONE ================== -->
+  <g>
+    <rect x="80" y="310" width="1440" height="130" rx="8" fill="url(#z-corp)" stroke="#38bdf8" stroke-width="1.4"/>
+    <rect x="80" y="310" width="8" height="130" fill="#38bdf8" filter="url(#softglow)"/>
+    <rect x="80" y="310" width="8" height="130" fill="#38bdf8"/>
+
+    <g transform="translate(105, 338)">
+      <text font-size="11" fill="#38bdf8" letter-spacing="4" font-weight="700">LEVEL 4</text>
+      <text y="26" font-size="22" fill="#e6f1ff" font-weight="800" letter-spacing="2">CORPORATE</text>
+      <text y="48" font-size="10" fill="#8892b0" letter-spacing="1">10.0.1.0/24</text>
+    </g>
+
+    <!-- Corporate Web Portal -->
+    <g transform="translate(480, 335)">
+      <rect x="0" y="0" width="230" height="80" rx="5" fill="url(#card-bg)" stroke="#38bdf8" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="80" fill="#38bdf8"/>
+      <g color="#38bdf8"><use href="#server" x="12" y="14" width="32" height="32"/></g>
+      <text x="54" y="26" font-size="13" fill="#e6f1ff" font-weight="700">Corporate Portal</text>
+      <text x="54" y="44" font-size="11" fill="#8892b0">10.0.1.10 : 80</text>
+      <rect x="12" y="58" width="42" height="14" rx="7" fill="#38bdf8" opacity="0.18" stroke="#38bdf8" stroke-width="0.6"/>
+      <text x="33" y="68" font-size="9" fill="#38bdf8" text-anchor="middle" letter-spacing="1" font-weight="700">HTTP</text>
+    </g>
+
+    <!-- BMS / BACnet -->
+    <g transform="translate(780, 335)">
+      <rect x="0" y="0" width="230" height="80" rx="5" fill="url(#card-bg)" stroke="#38bdf8" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="80" fill="#38bdf8"/>
+      <g color="#38bdf8"><use href="#server" x="12" y="14" width="32" height="32"/></g>
+      <text x="54" y="26" font-size="13" fill="#e6f1ff" font-weight="700">BMS Sensor</text>
+      <text x="54" y="44" font-size="11" fill="#8892b0">10.0.1.20 : UDP 47808</text>
+      <rect x="12" y="58" width="54" height="14" rx="7" fill="#38bdf8" opacity="0.18" stroke="#38bdf8" stroke-width="0.6"/>
+      <text x="39" y="68" font-size="9" fill="#38bdf8" text-anchor="middle" letter-spacing="1" font-weight="700">BACNET</text>
+    </g>
+
+    <!-- Gateway -->
+    <g transform="translate(1150, 357)">
+      <rect x="0" y="0" width="150" height="44" rx="22" fill="transparent" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4 2" opacity="0.8"/>
+      <text x="75" y="20" font-size="10" fill="#38bdf8" text-anchor="middle" letter-spacing="3" font-weight="700">GATEWAY</text>
+      <text x="75" y="34" font-size="11" fill="#e6f1ff" text-anchor="middle">10.0.1.1</text>
+    </g>
+  </g>
+
+  <!-- FIREWALL: Corp → DMZ -->
+  <g>
+    <!-- Downward trunk line -->
+    <line x1="800" y1="445" x2="800" y2="510" stroke="#4ade80" stroke-width="2.5" opacity="0.85"/>
+    <line x1="800" y1="512" x2="800" y2="545" stroke="#4ade80" stroke-width="2.5" opacity="0.85" marker-end="url(#arr-green)"/>
+
+    <!-- Firewall block centered on the trunk -->
+    <g transform="translate(750, 477)">
+      <rect x="0" y="0" width="100" height="36" rx="4" fill="#0a0f1f" stroke="#64ffda" stroke-width="1" opacity="0.95"/>
+      <use href="#shield" x="6" y="4" width="28" height="28"/>
+      <text x="40" y="16" font-size="11" fill="#64ffda" font-weight="700" letter-spacing="2">FW</text>
+      <text x="40" y="29" font-size="8" fill="#8892b0">L4▸L3.5</text>
+    </g>
+
+    <!-- Allowed ports label off to the side -->
+    <g transform="translate(870, 485)">
+      <text font-size="9" fill="#4ade80" letter-spacing="2" font-weight="700">ALLOWED</text>
+      <text y="13" font-size="10" fill="#e6f1ff" letter-spacing="1">22 · 443 · 4840 · 8080 · 8443</text>
+    </g>
+  </g>
+
+  <!-- ================== DMZ ZONE ================== -->
+  <g>
+    <rect x="80" y="545" width="1440" height="130" rx="8" fill="url(#z-dmz)" stroke="#fbbf24" stroke-width="1.4"/>
+    <rect x="80" y="545" width="8" height="130" fill="#fbbf24" filter="url(#softglow)"/>
+    <rect x="80" y="545" width="8" height="130" fill="#fbbf24"/>
+
+    <g transform="translate(105, 573)">
+      <text font-size="11" fill="#fbbf24" letter-spacing="4" font-weight="700">LEVEL 3.5</text>
+      <text y="26" font-size="22" fill="#e6f1ff" font-weight="800" letter-spacing="2">DMZ</text>
+      <text y="48" font-size="10" fill="#8892b0" letter-spacing="1">10.0.2.0/24</text>
+    </g>
+
+    <g transform="translate(330, 570)">
+      <rect x="0" y="0" width="230" height="80" rx="5" fill="url(#card-bg)" stroke="#fbbf24" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="80" fill="#fbbf24"/>
+      <g color="#fbbf24"><use href="#server" x="12" y="14" width="32" height="32"/></g>
+      <text x="54" y="26" font-size="13" fill="#e6f1ff" font-weight="700">Historian</text>
+      <text x="54" y="44" font-size="11" fill="#8892b0">10.0.2.10 : 8080</text>
+      <rect x="12" y="58" width="72" height="14" rx="7" fill="#fbbf24" opacity="0.18" stroke="#fbbf24" stroke-width="0.6"/>
+      <text x="48" y="68" font-size="9" fill="#fbbf24" text-anchor="middle" letter-spacing="1" font-weight="700">HTTP+SQLi</text>
+    </g>
+
+    <g transform="translate(610, 570)">
+      <rect x="0" y="0" width="230" height="80" rx="5" fill="url(#card-bg)" stroke="#fbbf24" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="80" fill="#fbbf24"/>
+      <g color="#fbbf24"><use href="#server" x="12" y="14" width="32" height="32"/></g>
+      <text x="54" y="26" font-size="13" fill="#e6f1ff" font-weight="700">SSH Jump Host</text>
+      <text x="54" y="44" font-size="11" fill="#8892b0">10.0.2.20 : 22</text>
+      <rect x="12" y="58" width="66" height="14" rx="7" fill="#fbbf24" opacity="0.18" stroke="#fbbf24" stroke-width="0.6"/>
+      <text x="45" y="68" font-size="9" fill="#fbbf24" text-anchor="middle" letter-spacing="1" font-weight="700">SSH · PIVOT</text>
+    </g>
+
+    <g transform="translate(890, 570)">
+      <rect x="0" y="0" width="230" height="80" rx="5" fill="url(#card-bg)" stroke="#fbbf24" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="80" fill="#fbbf24"/>
+      <g color="#fbbf24"><use href="#server" x="12" y="14" width="32" height="32"/></g>
+      <text x="54" y="26" font-size="13" fill="#e6f1ff" font-weight="700">OPC-UA Gateway</text>
+      <text x="54" y="44" font-size="11" fill="#8892b0">10.0.2.30 : 4840</text>
+      <rect x="12" y="58" width="52" height="14" rx="7" fill="#fbbf24" opacity="0.18" stroke="#fbbf24" stroke-width="0.6"/>
+      <text x="38" y="68" font-size="9" fill="#fbbf24" text-anchor="middle" letter-spacing="1" font-weight="700">OPC-UA</text>
+    </g>
+
+    <g transform="translate(1150, 592)">
+      <rect x="0" y="0" width="150" height="44" rx="22" fill="transparent" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4 2" opacity="0.8"/>
+      <text x="75" y="20" font-size="10" fill="#fbbf24" text-anchor="middle" letter-spacing="3" font-weight="700">GATEWAY</text>
+      <text x="75" y="34" font-size="11" fill="#e6f1ff" text-anchor="middle">10.0.2.1</text>
+    </g>
+  </g>
+
+  <!-- FIREWALL: DMZ → SCADA -->
+  <g>
+    <line x1="800" y1="680" x2="800" y2="712" stroke="#4ade80" stroke-width="2.5" opacity="0.85"/>
+    <line x1="800" y1="714" x2="800" y2="780" stroke="#4ade80" stroke-width="2.5" opacity="0.85" marker-end="url(#arr-green)"/>
+
+    <g transform="translate(750, 712)">
+      <rect x="0" y="0" width="100" height="36" rx="4" fill="#0a0f1f" stroke="#64ffda" stroke-width="1" opacity="0.95"/>
+      <use href="#shield" x="6" y="4" width="28" height="28"/>
+      <text x="40" y="16" font-size="11" fill="#64ffda" font-weight="700" letter-spacing="2">FW</text>
+      <text x="40" y="29" font-size="8" fill="#8892b0">L3.5▸L3</text>
+    </g>
+
+    <g transform="translate(870, 720)">
+      <text font-size="9" fill="#4ade80" letter-spacing="2" font-weight="700">ALLOWED</text>
+      <text y="13" font-size="10" fill="#e6f1ff" letter-spacing="1">22 · 4840 · 8080</text>
+    </g>
+  </g>
+
+  <!-- ================== SCADA ZONE ================== -->
+  <g>
+    <rect x="80" y="780" width="1440" height="140" rx="8" fill="url(#z-scada)" stroke="#fb923c" stroke-width="1.4"/>
+    <rect x="80" y="780" width="8" height="140" fill="#fb923c" filter="url(#softglow)"/>
+    <rect x="80" y="780" width="8" height="140" fill="#fb923c"/>
+
+    <g transform="translate(105, 810)">
+      <text font-size="11" fill="#fb923c" letter-spacing="4" font-weight="700">LEVEL 3</text>
+      <text y="26" font-size="22" fill="#e6f1ff" font-weight="800" letter-spacing="2">SCADA</text>
+      <text y="48" font-size="10" fill="#8892b0" letter-spacing="1">10.0.3.0/24</text>
+    </g>
+
+    <!-- SCADA HMI -->
+    <g transform="translate(400, 808)">
+      <rect x="0" y="0" width="230" height="84" rx="5" fill="url(#card-bg)" stroke="#fb923c" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="84" fill="#fb923c"/>
+      <g color="#fb923c"><use href="#hmi" x="12" y="14" width="36" height="36"/></g>
+      <text x="56" y="26" font-size="13" fill="#e6f1ff" font-weight="700">SCADA HMI</text>
+      <text x="56" y="44" font-size="11" fill="#8892b0">10.0.3.10 : 8080</text>
+      <rect x="12" y="60" width="54" height="14" rx="7" fill="#fb923c" opacity="0.18" stroke="#fb923c" stroke-width="0.6"/>
+      <text x="39" y="70" font-size="9" fill="#fb923c" text-anchor="middle" letter-spacing="1" font-weight="700">HTTP/UI</text>
+    </g>
+
+    <!-- Engineering Workstation - dual homed, emphasized -->
+    <g transform="translate(710, 808)">
+      <!-- Outer glow ring to highlight dual-homed -->
+      <rect x="-4" y="-4" width="348" height="92" rx="7" fill="none" stroke="#fb923c" stroke-width="0.8" opacity="0.5" stroke-dasharray="4 3"/>
+      <rect x="0" y="0" width="340" height="84" rx="5" fill="url(#card-bg)" stroke="#fb923c" stroke-width="1.8"/>
+      <rect x="0" y="0" width="3" height="84" fill="#fb923c"/>
+      <g color="#fb923c"><use href="#server" x="12" y="14" width="32" height="32"/></g>
+      <text x="54" y="26" font-size="13" fill="#e6f1ff" font-weight="700">Engineering Workstation</text>
+      <text x="54" y="44" font-size="11" fill="#8892b0">10.0.3.20 · 10.0.4.20 · 10.0.5.20</text>
+      <g transform="translate(12, 58)">
+        <rect x="0" y="0" width="92" height="16" rx="8" fill="#fb923c" opacity="0.22" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="46" y="11" font-size="9" fill="#fb923c" text-anchor="middle" letter-spacing="2" font-weight="800">DUAL-HOMED</text>
+      </g>
+      <text x="112" y="69" font-size="9" fill="#8892b0" letter-spacing="1">bridges L3 ↔ L2 ↔ L1</text>
+    </g>
+
+    <g transform="translate(1150, 830)">
+      <rect x="0" y="0" width="150" height="44" rx="22" fill="transparent" stroke="#fb923c" stroke-width="1" stroke-dasharray="4 2" opacity="0.8"/>
+      <text x="75" y="20" font-size="10" fill="#fb923c" text-anchor="middle" letter-spacing="3" font-weight="700">GATEWAY</text>
+      <text x="75" y="34" font-size="11" fill="#e6f1ff" text-anchor="middle">10.0.3.1</text>
+    </g>
+  </g>
+
+  <!-- FIREWALL: SCADA → Process -->
+  <g>
+    <line x1="800" y1="925" x2="800" y2="957" stroke="#4ade80" stroke-width="2.5" opacity="0.85"/>
+    <line x1="800" y1="959" x2="800" y2="1025" stroke="#4ade80" stroke-width="2.5" opacity="0.85" marker-end="url(#arr-green)"/>
+
+    <g transform="translate(750, 957)">
+      <rect x="0" y="0" width="100" height="36" rx="4" fill="#0a0f1f" stroke="#64ffda" stroke-width="1" opacity="0.95"/>
+      <use href="#shield" x="6" y="4" width="28" height="28"/>
+      <text x="40" y="16" font-size="11" fill="#64ffda" font-weight="700" letter-spacing="2">FW</text>
+      <text x="40" y="29" font-size="8" fill="#8892b0">L3▸L2</text>
+    </g>
+
+    <g transform="translate(870, 965)">
+      <text font-size="9" fill="#4ade80" letter-spacing="2" font-weight="700">ALLOWED</text>
+      <text y="13" font-size="10" fill="#e6f1ff" letter-spacing="1">502 · 20000 · 44818 · 2404</text>
+    </g>
+  </g>
+
+  <!-- ================== PROCESS ZONE ================== -->
+  <g>
+    <rect x="80" y="1025" width="1440" height="200" rx="8" fill="url(#z-proc)" stroke="#ef4444" stroke-width="1.4"/>
+    <rect x="80" y="1025" width="8" height="200" fill="#ef4444" filter="url(#softglow)"/>
+    <rect x="80" y="1025" width="8" height="200" fill="#ef4444"/>
+
+    <g transform="translate(105, 1055)">
+      <text font-size="11" fill="#ef4444" letter-spacing="4" font-weight="700">LEVEL 2</text>
+      <text y="26" font-size="22" fill="#e6f1ff" font-weight="800" letter-spacing="2">PROCESS</text>
+      <text y="48" font-size="10" fill="#8892b0" letter-spacing="1">10.0.4.0/24</text>
+      <g transform="translate(0, 60)">
+        <rect x="0" y="0" width="62" height="16" rx="8" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="0.6"/>
+        <text x="31" y="11" font-size="9" fill="#ef4444" text-anchor="middle" letter-spacing="2" font-weight="800">5 PLCs</text>
+      </g>
+    </g>
+
+    <!-- PLC-1 Intake -->
+    <g transform="translate(260, 1055)">
+      <rect x="0" y="0" width="220" height="140" rx="5" fill="url(#card-bg)" stroke="#ef4444" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="140" fill="#ef4444"/>
+      <g color="#ef4444"><use href="#plc" x="14" y="14" width="44" height="44"/></g>
+      <text x="70" y="28" font-size="15" fill="#e6f1ff" font-weight="800">PLC-1</text>
+      <text x="70" y="46" font-size="11" fill="#fb923c">Intake</text>
+      <line x1="14" y1="68" x2="206" y2="68" stroke="#ef4444" stroke-width="0.6" opacity="0.4"/>
+      <text x="14" y="88" font-size="12" fill="#e6f1ff" font-weight="600" letter-spacing="1">10.0.4.101</text>
+      <text x="14" y="108" font-size="10" fill="#8892b0">MODBUS TCP</text>
+      <rect x="14" y="116" width="48" height="16" rx="8" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="0.6"/>
+      <text x="38" y="127" font-size="9" fill="#ef4444" text-anchor="middle" letter-spacing="1" font-weight="700">:502</text>
+    </g>
+
+    <!-- PLC-2 Chemical Dosing -->
+    <g transform="translate(500, 1055)">
+      <rect x="0" y="0" width="220" height="140" rx="5" fill="url(#card-bg)" stroke="#ef4444" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="140" fill="#ef4444"/>
+      <g color="#ef4444"><use href="#plc" x="14" y="14" width="44" height="44"/></g>
+      <text x="70" y="28" font-size="15" fill="#e6f1ff" font-weight="800">PLC-2</text>
+      <text x="70" y="46" font-size="11" fill="#fb923c">Chemical Dosing</text>
+      <line x1="14" y1="68" x2="206" y2="68" stroke="#ef4444" stroke-width="0.6" opacity="0.4"/>
+      <text x="14" y="88" font-size="12" fill="#e6f1ff" font-weight="600" letter-spacing="1">10.0.4.102</text>
+      <text x="14" y="108" font-size="10" fill="#8892b0">MODBUS TCP</text>
+      <rect x="14" y="116" width="48" height="16" rx="8" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="0.6"/>
+      <text x="38" y="127" font-size="9" fill="#ef4444" text-anchor="middle" letter-spacing="1" font-weight="700">:502</text>
+    </g>
+
+    <!-- PLC-3 Filtration -->
+    <g transform="translate(740, 1055)">
+      <rect x="0" y="0" width="220" height="140" rx="5" fill="url(#card-bg)" stroke="#ef4444" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="140" fill="#ef4444"/>
+      <g color="#ef4444"><use href="#plc" x="14" y="14" width="44" height="44"/></g>
+      <text x="70" y="28" font-size="15" fill="#e6f1ff" font-weight="800">PLC-3</text>
+      <text x="70" y="46" font-size="11" fill="#fb923c">Filtration</text>
+      <line x1="14" y1="68" x2="206" y2="68" stroke="#ef4444" stroke-width="0.6" opacity="0.4"/>
+      <text x="14" y="88" font-size="12" fill="#e6f1ff" font-weight="600" letter-spacing="1">10.0.4.103</text>
+      <text x="14" y="108" font-size="10" fill="#8892b0">DNP3</text>
+      <rect x="14" y="116" width="58" height="16" rx="8" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="0.6"/>
+      <text x="43" y="127" font-size="9" fill="#ef4444" text-anchor="middle" letter-spacing="1" font-weight="700">:20000</text>
+    </g>
+
+    <!-- PLC-4 Distribution -->
+    <g transform="translate(980, 1055)">
+      <rect x="0" y="0" width="220" height="140" rx="5" fill="url(#card-bg)" stroke="#ef4444" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="140" fill="#ef4444"/>
+      <g color="#ef4444"><use href="#plc" x="14" y="14" width="44" height="44"/></g>
+      <text x="70" y="28" font-size="15" fill="#e6f1ff" font-weight="800">PLC-4</text>
+      <text x="70" y="46" font-size="11" fill="#fb923c">Distribution</text>
+      <line x1="14" y1="68" x2="206" y2="68" stroke="#ef4444" stroke-width="0.6" opacity="0.4"/>
+      <text x="14" y="88" font-size="12" fill="#e6f1ff" font-weight="600" letter-spacing="1">10.0.4.104</text>
+      <text x="14" y="108" font-size="10" fill="#8892b0">ETHERNET/IP</text>
+      <rect x="14" y="116" width="58" height="16" rx="8" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="0.6"/>
+      <text x="43" y="127" font-size="9" fill="#ef4444" text-anchor="middle" letter-spacing="1" font-weight="700">:44818</text>
+    </g>
+
+    <!-- PLC-5 Power Feed -->
+    <g transform="translate(1220, 1055)">
+      <rect x="0" y="0" width="220" height="140" rx="5" fill="url(#card-bg)" stroke="#ef4444" stroke-width="1.2"/>
+      <rect x="0" y="0" width="3" height="140" fill="#ef4444"/>
+      <g color="#ef4444"><use href="#plc" x="14" y="14" width="44" height="44"/></g>
+      <text x="70" y="28" font-size="15" fill="#e6f1ff" font-weight="800">PLC-5</text>
+      <text x="70" y="46" font-size="11" fill="#fb923c">Power Feed</text>
+      <line x1="14" y1="68" x2="206" y2="68" stroke="#ef4444" stroke-width="0.6" opacity="0.4"/>
+      <text x="14" y="88" font-size="12" fill="#e6f1ff" font-weight="600" letter-spacing="1">10.0.4.105</text>
+      <text x="14" y="108" font-size="10" fill="#8892b0">IEC 60870-5-104</text>
+      <rect x="14" y="116" width="48" height="16" rx="8" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="0.6"/>
+      <text x="38" y="127" font-size="9" fill="#ef4444" text-anchor="middle" letter-spacing="1" font-weight="700">:2404</text>
+    </g>
+  </g>
+
+  <!-- ============ AIR-GAP BARRIER ============ -->
+  <g>
+    <line x1="80" y1="1277" x2="1520" y2="1277" stroke="#991b1b" stroke-width="1" stroke-dasharray="8 5" opacity="0.7"/>
+    <rect x="680" y="1265" width="240" height="24" rx="4" fill="#05070f" stroke="#991b1b" stroke-width="1"/>
+    <text x="800" y="1281" font-size="11" fill="#f87171" text-anchor="middle" letter-spacing="4" font-weight="800">⚠ AIR-GAP ZONE ⚠</text>
+  </g>
+
+  <!-- ================== SAFETY ZONE ================== -->
+  <g>
+    <rect x="80" y="1330" width="1440" height="130" rx="8" fill="url(#z-safe)" stroke="#991b1b" stroke-width="1.8"/>
+    <rect x="80" y="1330" width="8" height="130" fill="#ef4444" filter="url(#softglow)"/>
+    <rect x="80" y="1330" width="8" height="130" fill="#991b1b"/>
+
+    <g transform="translate(105, 1358)">
+      <text font-size="11" fill="#f87171" letter-spacing="4" font-weight="700">LEVEL 1</text>
+      <text y="26" font-size="22" fill="#e6f1ff" font-weight="800" letter-spacing="2">SAFETY / SIS</text>
+      <text y="48" font-size="10" fill="#8892b0" letter-spacing="1">10.0.5.0/24</text>
+      <g transform="translate(0, 60)">
+        <rect x="0" y="0" width="76" height="16" rx="8" fill="#991b1b" opacity="0.5" stroke="#f87171" stroke-width="0.6"/>
+        <text x="38" y="11" font-size="9" fill="#f87171" text-anchor="middle" letter-spacing="2" font-weight="800">ISOLATED</text>
+      </g>
+    </g>
+
+    <!-- Safety SIS PLC -->
+    <g transform="translate(400, 1355)">
+      <rect x="0" y="0" width="260" height="84" rx="5" fill="url(#card-bg)" stroke="#f87171" stroke-width="1.4"/>
+      <rect x="0" y="0" width="3" height="84" fill="#f87171"/>
+      <g color="#f87171"><use href="#plc" x="14" y="14" width="40" height="40"/></g>
+      <text x="64" y="28" font-size="13" fill="#e6f1ff" font-weight="800">Safety SIS PLC</text>
+      <text x="64" y="46" font-size="11" fill="#8892b0">10.0.5.201 : 102</text>
+      <rect x="14" y="60" width="58" height="16" rx="8" fill="#f87171" opacity="0.2" stroke="#f87171" stroke-width="0.6"/>
+      <text x="43" y="71" font-size="9" fill="#f87171" text-anchor="middle" letter-spacing="1" font-weight="700">S7COMM</text>
+    </g>
+
+    <!-- Safety HMI -->
+    <g transform="translate(700, 1355)">
+      <rect x="0" y="0" width="260" height="84" rx="5" fill="url(#card-bg)" stroke="#f87171" stroke-width="1.4"/>
+      <rect x="0" y="0" width="3" height="84" fill="#f87171"/>
+      <g color="#f87171"><use href="#hmi" x="14" y="14" width="40" height="40"/></g>
+      <text x="64" y="28" font-size="13" fill="#e6f1ff" font-weight="800">Safety HMI</text>
+      <text x="64" y="46" font-size="11" fill="#8892b0">10.0.5.202 : 8080</text>
+      <rect x="14" y="60" width="96" height="16" rx="8" fill="#f87171" opacity="0.2" stroke="#f87171" stroke-width="0.6"/>
+      <text x="62" y="71" font-size="9" fill="#f87171" text-anchor="middle" letter-spacing="1" font-weight="700">SIS MONITORING</text>
+    </g>
+
+    <!-- Gateway -->
+    <g transform="translate(1150, 1377)">
+      <rect x="0" y="0" width="150" height="44" rx="22" fill="transparent" stroke="#991b1b" stroke-width="1" stroke-dasharray="4 2" opacity="0.9"/>
+      <text x="75" y="20" font-size="10" fill="#f87171" text-anchor="middle" letter-spacing="3" font-weight="700">GATEWAY</text>
+      <text x="75" y="34" font-size="11" fill="#e6f1ff" text-anchor="middle">10.0.5.1</text>
+    </g>
+  </g>
+
+  <!--
+    ============ MAINTENANCE BRIDGE ============
+    Cleaner route: exit EWS bottom-right (1050, 855) → drop a bit into clear area (y=880) → horizontal right to x=1480
+      → drop down through Process zone right gutter → into Safety zone
+  -->
+  <g>
+    <!-- Main path: exit EWS bottom edge at y=862 (box bottom), drop into SCADA-Process gutter, right to the drop channel, down to Safety -->
+    <path d="M 1020 892 L 1020 945 L 1460 945 Q 1480 945 1480 965 L 1480 1357 Q 1480 1377 1460 1377 L 1300 1377"
+          stroke="#fbbf24" stroke-width="2.2" stroke-dasharray="7 4" fill="none" opacity="0.95"
+          marker-end="url(#arr-amber)"/>
+
+    <!-- Pulse dot -->
+    <circle r="4" fill="#fbbf24" filter="url(#softglow)">
+      <animateMotion dur="5s" repeatCount="indefinite"
+        path="M 1020 892 L 1020 945 L 1460 945 Q 1480 945 1480 965 L 1480 1357 Q 1480 1377 1460 1377 L 1300 1377"/>
+    </circle>
+
+    <!-- Exit marker at EWS bottom -->
+    <circle cx="1020" cy="892" r="4" fill="#fbbf24"/>
+    <circle cx="1020" cy="892" r="9" fill="none" stroke="#fbbf24" stroke-width="0.8" opacity="0.5"/>
+
+    <!-- Bridge label placed in the L3→L2 gutter: below the horizontal dashed path (y=945), above Process zone (y=1025) -->
+    <g transform="translate(1120, 980)">
+      <rect x="0" y="0" width="280" height="40" rx="6" fill="#0a0f1f" stroke="#fbbf24" stroke-width="1.2"/>
+      <rect x="0" y="0" width="4" height="40" fill="#fbbf24"/>
+      <g transform="translate(18, 20)">
+        <circle cx="0" cy="0" r="6" fill="none" stroke="#fbbf24" stroke-width="1.2"/>
+        <circle cx="0" cy="0" r="2" fill="#fbbf24"/>
+      </g>
+      <text x="34" y="17" font-size="11" fill="#fbbf24" font-weight="800" letter-spacing="2">MAINTENANCE BRIDGE</text>
+      <text x="34" y="31" font-size="9" fill="#e6f1ff" letter-spacing="1">:10102 · EWS → SIS · only path</text>
+    </g>
+  </g>
+
+  <!-- ========== FOOTER LEGEND ========== -->
+  <g>
+    <line x1="80" y1="1540" x2="1520" y2="1540" stroke="#1a2340" stroke-width="1"/>
+
+    <g transform="translate(80, 1568)" font-size="13" letter-spacing="2">
+      <!-- Legend items -->
+      <g>
+        <line x1="0" y1="-4" x2="30" y2="-4" stroke="#4ade80" stroke-width="2.5"/>
+        <polygon points="26,-8 32,-4 26,0" fill="#4ade80"/>
+        <text x="42" y="0" fill="#8892b0">ALLOWED TRAFFIC</text>
+      </g>
+      <g transform="translate(260, 0)">
+        <line x1="0" y1="-4" x2="30" y2="-4" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="5 2"/>
+        <text x="42" y="0" fill="#8892b0">MAINTENANCE BRIDGE</text>
+      </g>
+      <g transform="translate(540, 0)">
+        <use href="#shield" x="-4" y="-16" width="22" height="22"/>
+        <text x="26" y="0" fill="#8892b0">FIREWALL</text>
+      </g>
+      <g transform="translate(700, 0)">
+        <text x="0" y="0" fill="#f87171" font-weight="700" font-size="14">⚠</text>
+        <text x="22" y="0" fill="#8892b0">AIR-GAP · SAFETY ISOLATED</text>
+      </g>
+    </g>
+
+    <text x="1520" y="1568" font-size="13" fill="#64ffda" text-anchor="end" letter-spacing="4" font-weight="700">
+      SYSRUPT.IO  //  ARCH v1.0
+    </text>
+  </g>
+</svg>

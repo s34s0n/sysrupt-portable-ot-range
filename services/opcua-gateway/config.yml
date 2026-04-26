@@ -1,0 +1,38 @@
+service:
+  name: "opcua-gateway"
+  description: "OPC-UA gateway bridging PROCESS to DMZ"
+  zone: "dmz"
+  ip: "10.0.2.30"
+  port: 4840
+  protocol: "opcua"
+
+opcua:
+  endpoint: "opc.tcp://0.0.0.0:4840/sysrupt/wtp"
+  namespace: "urn:sysrupt:wtp:opcua"
+  server_name: "Sysrupt WTP OPC-UA Gateway"
+  security: "NoSecurity"
+  update_interval_s: 2
+  nodes:
+    - name: "WaterTreatmentPlant"
+      children:
+        - "PlantInfo"
+        - "IntakePumps"
+        - "ChemicalDosing"
+        - "Filtration"
+        - "Distribution"
+        - "PowerFeed"
+        - "FieldSensors"
+        - "SafetySystem"
+
+vulnerabilities:
+  - id: "OPCUA-VULN-01"
+    description: "Anonymous access with NoSecurity policy"
+  - id: "OPCUA-VULN-02"
+    description: "AlarmInhibit writable by any client"
+  - id: "OPCUA-VULN-03"
+    description: "Hidden flag in deep Maintenance/ServiceHistory node"
+
+flags:
+  - id: "FLAG-OPCUA-01"
+    location: "PlantInfo/Maintenance/ServiceHistory/Entry_2024_03_15/Notes"
+    value: "SYSRUPT{0pc_ua_br0ws3r_pr0}"

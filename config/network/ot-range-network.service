@@ -1,0 +1,16 @@
+[Unit]
+Description=Sysrupt OT Range Network Setup
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/sysrupt/sysrupt-ot-range/config/network/setup-namespaces.sh
+ExecStartPost=/home/sysrupt/sysrupt-ot-range/config/network/firewall-rules.sh
+ExecStop=/home/sysrupt/sysrupt-ot-range/config/network/teardown.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

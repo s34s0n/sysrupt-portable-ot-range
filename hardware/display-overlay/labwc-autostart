@@ -1,0 +1,10 @@
+# Sysrupt OT Range - clean kiosk boot
+/usr/bin/kanshi &
+swaybg -c "#000000" 2>/dev/null &
+
+# Hide cursor immediately
+DISPLAY=:0 unclutter -idle 0 -root &
+
+# Wait for display server, then launch Firefox
+sleep 15
+MOZ_ENABLE_WAYLAND=1 firefox --kiosk http://localhost:5555 &

@@ -1,0 +1,7 @@
+service: historian
+name: Process Historian
+namespace: dmz
+bind: 0.0.0.0
+port: 8080
+database: historian.db
+description: Process data historian with query interface

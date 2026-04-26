@@ -1,0 +1,25 @@
+challenge:
+  id: 6
+  name: "deep_protocol_enip"
+  category: "protocol"
+  difficulty: "hard"
+  points: 450
+  zone: "process"
+  description: "Communicate with the distribution PLC using EtherNet/IP (CIP)."
+  flag:
+    value: "SYSRUPT{c1p_3th3rn3t_1p_pwn3d}"
+    location: "PLC-4 distribution controller"
+  hints:
+    - delay_minutes: 15
+      text: "The distribution PLC uses EtherNet/IP, an industrial Ethernet protocol."
+    - delay_minutes: 30
+      text: "EtherNet/IP uses CIP (Common Industrial Protocol) for data exchange."
+    - delay_minutes: 45
+      text: "Send a ListIdentity request to discover the device."
+  solution:
+    summary: "Use EtherNet/IP to enumerate and read from the distribution PLC."
+    tools: ["pycomm3", "cpppo", "Wireshark"]
+    steps:
+      - "Connect to PLC-4 on port 44818"
+      - "Send CIP ListIdentity request"
+      - "Read tags from the PLC"

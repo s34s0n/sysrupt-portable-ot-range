@@ -1,0 +1,95 @@
+# Hardware mode: "simulated" or "real"
+mode: simulated
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+  prefix: "hw:"
+  publish_channel: "hardware.state"
+  update_interval_ms: 500
+
+simulation:
+  temperature:
+    sensors:
+      - id: "temp_process"
+        name: "Process Water Temperature"
+        location: "Chemical Treatment Tank"
+        base_value_c: 26.0
+        noise_amplitude_c: 0.3
+        drift_rate_c_per_hour: 0.5
+        min_c: 15.0
+        max_c: 45.0
+      - id: "temp_ambient"
+        name: "Ambient Board Temperature"
+        location: "PCB Near RTL8367S"
+        base_value_c: 32.0
+        noise_amplitude_c: 0.2
+        drift_rate_c_per_hour: 0.1
+        min_c: 20.0
+        max_c: 55.0
+
+  relays:
+    - id: "relay1"
+      name: "Intake Pump 1"
+      initial_state: false
+      click_sound: true
+    - id: "relay2"
+      name: "Intake Pump 2"
+      initial_state: false
+      click_sound: true
+    - id: "relay3"
+      name: "Chemical Dosing Pump"
+      initial_state: false
+      click_sound: true
+    - id: "relay4"
+      name: "Outlet Valve"
+      initial_state: false
+      click_sound: true
+
+  leds:
+    - id: "led_zone_it"
+      name: "IT Zone Status"
+      color: "green"
+      initial_state: "off"
+    - id: "led_zone_dmz"
+      name: "DMZ Zone Status"
+      color: "yellow"
+      initial_state: "off"
+    - id: "led_zone_ot"
+      name: "OT Zone Status"
+      color: "red"
+      initial_state: "off"
+    - id: "led_zone_safety"
+      name: "Safety Zone Status"
+      color: "blue"
+      initial_state: "off"
+
+real_hardware:
+  i2c:
+    bus: 1
+    sda: 2
+    scl: 3
+  lm75_sensors:
+    - id: "temp_process"
+      address: 0x48
+    - id: "temp_ambient"
+      address: 0x49
+  relays:
+    - id: "relay1"
+      gpio: 21
+    - id: "relay2"
+      gpio: 5
+    - id: "relay3"
+      gpio: 6
+    - id: "relay4"
+      gpio: 7
+  leds:
+    - id: "led_zone_it"
+      gpio: 8
+    - id: "led_zone_dmz"
+      gpio: 9
+    - id: "led_zone_ot"
+      gpio: 2
+    - id: "led_zone_safety"
+      gpio: 3

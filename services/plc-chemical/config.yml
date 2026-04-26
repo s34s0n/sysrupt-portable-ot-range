@@ -1,0 +1,101 @@
+plc:
+  id: chemical
+  name: PLC-2 Chemical Dosing Controller
+  description: |
+    PID-controlled free-chlorine dosing with pH monitoring. Hypochlorite
+    is injected downstream of the filter bank via a variable-speed
+    metering pump. Safety interlock stops dosing on chlorine runaway
+    (>5.00 ppm) regardless of mode.
+  vendor: "Allen-Bradley (emulated)"
+  model: "CompactLogix 5380 (emulated)"
+
+network:
+  namespace: svc-plc-chemical
+  bind_ip: 0.0.0.0
+  modbus_port: 502
+  web_ide_port: 8080
+
+runtime:
+  scan_period_ms: 50
+  publish_period_ms: 500
+  st_file: ladder-logic/chlorine_dosing_pid.st
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  channels:
+    physics_inputs: physics:plc:chemical:inputs
+    modbus_writes: modbus.write
+    program_uploads: plc.program.uploaded
+  keys:
+    status: plc:chemical:status
+    holding: plc:chemical:holding
+    inputs: plc:chemical:inputs
+    coils: plc:chemical:coils
+    discrete: plc:chemical:discrete
+    full_state: plc:chemical:full_state
+
+web_ide:
+  username: openplc
+  password: openplc
+
+notes: |
+  All analog values are scaled integers:
+    chlorine    = ppm * 100      (150 -> 1.50 ppm)
+    temperature = degC * 10      (263 -> 26.3 C)
+    pH          = pH * 100       (720 -> 7.20)
+    flow_rate   = LPM            (125 LPM)
+
+registers:
+  holding:
+    - { addr: 0,  name: cl_setpoint,      rw: RW, default: 150,   units: "ppm*100", desc: "Chlorine setpoint" }
+    - { addr: 1,  name: cl_alarm_high,    rw: RW, default: 400,   units: "ppm*100", desc: "Chlorine high alarm (4.00 ppm)" }
+    - { addr: 2,  name: cl_alarm_low,     rw: RW, default: 50,    units: "ppm*100", desc: "Chlorine low alarm (0.50 ppm)" }
+    - { addr: 3,  name: ph_setpoint,      rw: RW, default: 720,   units: "pH*100",  desc: "pH setpoint" }
+    - { addr: 4,  name: ph_alarm_high,    rw: RW, default: 850,   units: "pH*100",  desc: "pH high alarm (8.50)" }
+    - { addr: 5,  name: ph_alarm_low,     rw: RW, default: 650,   units: "pH*100",  desc: "pH low alarm (6.50)" }
+    - { addr: 6,  name: pid_kp,           rw: RW, default: 200,   units: "x100",    desc: "PID proportional gain (2.00)" }
+    - { addr: 7,  name: pid_ki,           rw: RW, default: 50,    units: "x100",    desc: "PID integral gain (0.50)" }
+    - { addr: 8,  name: pid_kd,           rw: RW, default: 10,    units: "x100",    desc: "PID derivative gain (0.10)" }
+    - { addr: 9,  name: pid_mode,         rw: RW, default: 1,     units: "enum",    desc: "0=MANUAL, 1=AUTO" }
+    - { addr: 10, name: manual_speed,     rw: RW, default: 0,     units: "%",       desc: "Manual pump speed 0-100" }
+    - { addr: 11, name: pid_output,       rw: RO, default: 0,     units: "%",       desc: "PID calculated output" }
+    - { addr: 12, name: dosing_total_ml,  rw: RO, default: 0,     units: "mL",      desc: "Cumulative dose" }
+    - { addr: 13, name: pid_integral,     rw: RO, default: 0,     units: "-",       desc: "PID integral accumulator (s16)" }
+    - { addr: 14, name: pid_error,        rw: RO, default: 0,     units: "ppm*100", desc: "PID error term (s16)" }
+    - { addr: 15, name: alarm_inhibit,    rw: RW, default: 0,     units: "bool",    desc: "Suppress alarms (commissioning only)" }
+    - { addr: 16, name: reserved_16,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 17, name: reserved_17,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 18, name: reserved_18,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 19, name: reserved_19,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 20, name: reserved_20,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 21, name: reserved_21,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 22, name: reserved_22,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 23, name: reserved_23,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 24, name: reserved_24,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 25, name: reserved_25,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 26, name: reserved_26,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 27, name: reserved_27,      rw: RW, default: 0,     units: "",        desc: "Reserved" }
+    - { addr: 28, name: fw_flag_hi,       rw: RW, default: 16723, units: "-",       desc: "Firmware build marker (do not modify)" }
+    - { addr: 29, name: fw_flag_lo,       rw: RW, default: 17481, units: "-",       desc: "Firmware build marker (do not modify)" }
+
+  input:
+    - { addr: 0, name: chlorine_raw,    rw: RO, default: 150, units: "ppm*100", desc: "Free chlorine analyzer" }
+    - { addr: 1, name: temperature_raw, rw: RO, default: 263, units: "degC*10", desc: "Process temperature" }
+    - { addr: 2, name: ph_raw,          rw: RO, default: 720, units: "pH*100",  desc: "pH probe" }
+    - { addr: 3, name: flow_rate,       rw: RO, default: 125, units: "LPM",     desc: "Treated water flow" }
+
+  coils:
+    - { addr: 0, name: dosing_pump_cmd, rw: RW, default: true,  desc: "Metering pump run command" }
+    - { addr: 1, name: dosing_valve,    rw: RW, default: false, desc: "Dosing line isolation valve" }
+    - { addr: 2, name: mixer_cmd,       rw: RW, default: false, desc: "In-line mixer run command" }
+    - { addr: 3, name: cl_alarm_high,   rw: RO, default: false, desc: "Chlorine high alarm" }
+    - { addr: 4, name: cl_alarm_low,    rw: RO, default: false, desc: "Chlorine low alarm" }
+    - { addr: 5, name: ph_alarm_high,   rw: RO, default: false, desc: "pH high alarm" }
+    - { addr: 6, name: ph_alarm_low,    rw: RO, default: false, desc: "pH low alarm" }
+
+  discrete:
+    - { addr: 0, name: dosing_fb,  rw: RO, default: true,  desc: "Metering pump run feedback" }
+    - { addr: 1, name: valve_fb,   rw: RO, default: false, desc: "Dosing valve position" }
+    - { addr: 2, name: mixer_fb,   rw: RO, default: false, desc: "Mixer run feedback" }
+    - { addr: 3, name: safety_ok,  rw: RO, default: true,  desc: "Safety interlocks healthy" }

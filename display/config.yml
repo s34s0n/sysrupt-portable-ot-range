@@ -1,0 +1,37 @@
+# Display runtime configuration - Session 9
+# Flask + Socket.IO game hub for ILI9341 320x240
+
+server:
+  host: "0.0.0.0"
+  port: 5555
+
+display:
+  width: 320
+  height: 240
+  rotation: 0
+  brightness: 100
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+
+state_machine:
+  boot_duration_s: 5
+  rotation:
+    progress_s: 10
+    hint_s: 8
+    plant_mini_s: 5
+  interrupts:
+    flag_captured_s: 10
+    attack_alert_s: 5
+
+screens:
+  - boot
+  - idle
+  - progress
+  - hint
+  - plant_mini
+  - flag_captured
+  - attack_alert
+  - sis_trip
+  - victory

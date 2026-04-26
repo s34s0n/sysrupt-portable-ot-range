@@ -1,0 +1,12 @@
+127.0.0.1       localhost
+10.0.3.10    scada-hmi
+10.0.3.20    eng-workstation
+10.0.3.30    ids-monitor
+10.0.4.101   plc-intake
+10.0.4.102   plc-chemical
+10.0.4.103   plc-filtration
+10.0.4.104   plc-distribution
+10.0.4.105   plc-power
+10.0.4.110   rtu-sensors
+10.0.5.201   safety-plc
+10.0.5.202   safety-hmi

@@ -1,0 +1,145 @@
+service:
+  name: "ids-monitor"
+  description: "Passive OT intrusion detection engine"
+  zone: "scada"
+  ip: "10.0.3.30"
+  port: 0
+  protocol: "redis-pubsub"
+
+redis:
+  channels:
+    - "modbus.write"
+    - "ot.protocol.write"
+    - "sis.write"
+    - "sis.maintenance"
+    - "opcua.access"
+    - "bms.access"
+  poll_keys:
+    - "physics:plant_state"
+  output_keys:
+    - "ids:alert_count"
+    - "ids:alerts"
+    - "ids:latest_alert"
+    - "ids:threat_level"
+    - "ids:active"
+  output_channel: "ids:alert"
+
+engine:
+  physics_poll_interval: 5
+  alert_history_max: 100
+  alert_display_max: 20
+  threat_window_sec: 300
+
+allowed_modbus_sources:
+  - "10.0.4.10"
+  - "10.0.3.10"
+  - "127.0.0.1"
+
+rules:
+  # Recon (LOW)
+  - id: IDS-001
+    name: "Port Scan Detected"
+    severity: LOW
+    cooldown: 60
+  - id: IDS-002
+    name: "OPC-UA Enumeration"
+    severity: LOW
+    cooldown: 120
+  - id: IDS-003
+    name: "BACnet Discovery"
+    severity: LOW
+    cooldown: 120
+  - id: IDS-004
+    name: "Modbus Device Scan"
+    severity: LOW
+    cooldown: 60
+
+  # Unauthorized Access (MEDIUM-HIGH)
+  - id: IDS-010
+    name: "Unauthorized Modbus Source"
+    severity: MEDIUM
+    cooldown: 30
+  - id: IDS-011
+    name: "Unauthorized S7comm Access"
+    severity: HIGH
+    cooldown: 10
+  - id: IDS-012
+    name: "Unauthorized DNP3 Control"
+    severity: MEDIUM
+    cooldown: 30
+  - id: IDS-013
+    name: "Unauthorized ENIP Write"
+    severity: MEDIUM
+    cooldown: 30
+  - id: IDS-014
+    name: "Unauthorized IEC104 Command"
+    severity: HIGH
+    cooldown: 10
+
+  # Process Anomalies
+  - id: IDS-020
+    name: "PID Mode Change to Manual"
+    severity: HIGH
+    cooldown: 0
+  - id: IDS-021
+    name: "Setpoint Change Anomaly"
+    severity: MEDIUM
+    cooldown: 30
+  - id: IDS-022
+    name: "Alarm Inhibit Activated"
+    severity: CRITICAL
+    cooldown: 0
+  - id: IDS-023
+    name: "Alarm Threshold Raised"
+    severity: CRITICAL
+    cooldown: 0
+  - id: IDS-024
+    name: "Manual Dosing Excessive"
+    severity: HIGH
+    cooldown: 30
+  - id: IDS-025-M
+    name: "Chlorine Level Elevated"
+    severity: MEDIUM
+    cooldown: 60
+  - id: IDS-025-H
+    name: "Chlorine Level High"
+    severity: HIGH
+    cooldown: 60
+  - id: IDS-025-C
+    name: "Chlorine Level Critical"
+    severity: CRITICAL
+    cooldown: 60
+
+  # Safety System
+  - id: IDS-030
+    name: "SIS Maintenance Mode Enabled"
+    severity: CRITICAL
+    cooldown: 0
+  - id: IDS-031
+    name: "SIS Trip Threshold Modified"
+    severity: CRITICAL
+    cooldown: 0
+  - id: IDS-032
+    name: "SIS Trip Delay Increased"
+    severity: HIGH
+    cooldown: 0
+
+  # Program Manipulation
+  - id: IDS-040
+    name: "PLC Program Upload"
+    severity: CRITICAL
+    cooldown: 0
+  - id: IDS-041
+    name: "PLC Program Download"
+    severity: MEDIUM
+    cooldown: 120
+
+  # Infrastructure
+  - id: IDS-050
+    name: "Power Breaker Open Command"
+    severity: CRITICAL
+    cooldown: 0
+  - id: IDS-051
+    name: "OPC-UA Write from DMZ"
+    severity: HIGH
+    cooldown: 30

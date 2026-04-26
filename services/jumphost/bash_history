@@ -1,0 +1,8 @@
+ssh openplc@10.0.3.20
+ssh engineer@10.0.3.20
+ping 10.0.3.10
+curl http://10.0.3.10:8080/api/status
+nmap -p 502,20000,44818,2404 10.0.4.0/24
+modbus read 10.0.4.101 %MW0 10
+python3 -c "import snap7; c=snap7.client.Client(); c.connect('10.0.5.201',0,1)"
+cat /etc/hosts

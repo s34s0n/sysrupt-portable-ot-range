@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Process Overview - SCADA HMI{% endblock %}
+{% block content %}
+<div class="dash-grid">
+    <!-- Left: Process Flow Diagram -->
+    <div class="panel panel-main">
+        <h3>Process Flow Diagram</h3>
+        <svg id="process-svg" viewBox="0 0 900 400" class="process-svg">
+            <!-- Raw Water Intake -->
+            <text x="30" y="20" class="svg-label">RAW WATER</text>
+            <rect x="10" y="30" width="100" height="120" fill="none" stroke="#4488ff" stroke-width="2" rx="3"/>
+            <rect id="tank-water" x="12" y="80" width="96" height="68" fill="#4488ff" opacity="0.6"/>
+            <text id="tank-val" x="60" y="100" text-anchor="middle" class="svg-value">72.0%</text>
+            <text x="60" y="165" text-anchor="middle" class="svg-sublabel">Tank Level</text>
+
+            <!-- Pump Section -->
+            <line x1="110" y1="90" x2="160" y2="90" stroke="#4488ff" stroke-width="3"/>
+            <circle id="pump1" cx="185" cy="75" r="20" fill="none" stroke="#00cc66" stroke-width="2"/>
+            <text x="185" y="79" text-anchor="middle" class="svg-small">P1</text>
+            <text id="pump1-status" x="185" y="110" text-anchor="middle" class="svg-status status-on">RUN</text>
+            <circle id="pump2" cx="185" cy="145" r="20" fill="none" stroke="#666" stroke-width="2"/>
+            <text x="185" y="149" text-anchor="middle" class="svg-small">P2</text>
+            <text id="pump2-status" x="185" y="178" text-anchor="middle" class="svg-status status-off">STOP</text>
+
+            <!-- Chemical Dosing -->
+            <line x1="205" y1="90" x2="280" y2="90" stroke="#4488ff" stroke-width="3"/>
+            <rect x="280" y="30" width="160" height="165" fill="none" stroke="#ffaa00" stroke-width="2" rx="3"/>
+            <text x="360" y="20" text-anchor="middle" class="svg-label">CHEMICAL DOSING</text>
+            <text x="300" y="55" class="svg-param">Chlorine:</text>
+            <text id="cl-val" x="420" y="55" text-anchor="end" class="svg-value val-normal">2.50 ppm</text>
+            <text x="300" y="80" class="svg-param">pH:</text>
+            <text id="ph-val" x="420" y="80" text-anchor="end" class="svg-value">7.20</text>
+            <text x="300" y="105" class="svg-param">Temp:</text>
+            <text id="temp-val" x="420" y="105" text-anchor="end" class="svg-value">18.5 &deg;C</text>
+            <text x="300" y="130" class="svg-param">PID:</text>
+            <text id="pid-val" x="420" y="130" text-anchor="end" class="svg-value">AUTO</text>
+            <text x="300" y="155" class="svg-param">Setpoint:</text>
+            <text id="sp-val" x="420" y="155" text-anchor="end" class="svg-value">2.50 ppm</text>
+            <text x="300" y="180" class="svg-param">Flow:</text>
+            <text id="flow-val" x="420" y="180" text-anchor="end" class="svg-value">850 GPM</text>
+
+            <!-- Filter Beds -->
+            <line x1="440" y1="90" x2="500" y2="90" stroke="#4488ff" stroke-width="3"/>
+            <rect x="500" y="30" width="150" height="165" fill="none" stroke="#00cc66" stroke-width="2" rx="3"/>
+            <text x="575" y="20" text-anchor="middle" class="svg-label">FILTRATION</text>
+            <text x="515" y="55" class="svg-param">F1 DP:</text>
+            <text id="f1-val" x="635" y="55" text-anchor="end" class="svg-value">8.2 psi</text>
+            <text x="515" y="80" class="svg-param">F2 DP:</text>
+            <text id="f2-val" x="635" y="80" text-anchor="end" class="svg-value">7.5 psi</text>
+            <text x="515" y="105" class="svg-param">F3 DP:</text>
+            <text id="f3-val" x="635" y="105" text-anchor="end" class="svg-value">9.1 psi</text>
+            <text x="515" y="130" class="svg-param">F4 DP:</text>
+            <text id="f4-val" x="635" y="130" text-anchor="end" class="svg-value">6.8 psi</text>
+
+            <!-- Distribution -->
+            <line x1="650" y1="90" x2="720" y2="90" stroke="#4488ff" stroke-width="3"/>
+            <rect x="720" y="30" width="160" height="100" fill="none" stroke="#4488ff" stroke-width="2" rx="3"/>
+            <text x="800" y="20" text-anchor="middle" class="svg-label">DISTRIBUTION</text>
+            <text x="735" y="60" class="svg-param">Pressure:</text>
+            <text id="dist-val" x="865" y="60" text-anchor="end" class="svg-value">62.0 psi</text>
+            <text x="735" y="90" class="svg-param">Flow:</text>
+            <text id="dist-flow" x="865" y="90" text-anchor="end" class="svg-value">850 GPM</text>
+
+            <!-- Status Indicators -->
+            <rect x="720" y="200" width="160" height="90" fill="none" stroke="#888" stroke-width="1" rx="3"/>
+            <text x="800" y="220" text-anchor="middle" class="svg-label">STATUS</text>
+            <circle id="power-ind" cx="745" cy="245" r="8" fill="#00cc66"/>
+            <text x="760" y="249" class="svg-param">Power</text>
+            <text id="power-val" x="865" y="249" text-anchor="end" class="svg-value">NORMAL</text>
+            <circle id="sis-ind" cx="745" cy="270" r="8" fill="#00cc66"/>
+            <text x="760" y="274" class="svg-param">SIS</text>
+            <text id="sis-val" x="865" y="274" text-anchor="end" class="svg-value">ARMED</text>
+            <!-- CH-08 Flag (inside SVG, below status) -->
+            <rect id="flag-box" x="200" y="310" width="500" height="60" fill="#0a2a0a" stroke="#00ff66" stroke-width="3" rx="5" style="display:none;"/>
+            <text id="flag-title" x="450" y="335" text-anchor="middle" style="fill:#00ff66; font-size:14px; font-family:Consolas,monospace; font-weight:700; display:none;"></text>
+            <text id="flag-msg" x="450" y="358" text-anchor="middle" style="fill:#00ff66; font-size:16px; font-family:Consolas,monospace; font-weight:700; display:none;"></text>
+        </svg>
+    </div>
+
+    <!-- Right: Status Cards -->
+    <div class="panel panel-side">
+        <div class="status-card">
+            <h4>System Status</h4>
+            <div class="status-row"><span>Mode</span><span id="mode-text" class="val-ok">AUTOMATIC</span></div>
+            <div class="status-row"><span>Alarms</span><span id="alarm-text" class="val-ok">NONE</span></div>
+            <div class="status-row"><span>Last Update</span><span id="update-time" class="val-dim">--</span></div>
+        </div>
+        <div class="status-card" id="alarm-card" style="display:none;">
+            <h4 class="alarm-title">ALARM</h4>
+            <p id="alarm-msg" class="alarm-msg"></p>
+        </div>
+    </div>
+</div>
+
+<!-- SIS Trip Overlay -->
+<div id="sis-overlay" class="sis-overlay" style="display:none;">
+    <div class="sis-box">
+        <h2>SAFETY SYSTEM ACTIVATED</h2>
+        <p>Emergency shutdown initiated by SIS</p>
+        <p>Chlorine dosing pump STOPPED</p>
+        <p>Contact Operations Supervisor immediately</p>
+    </div>
+</div>
+
+<!-- CH-10 Victory Overlay -->
+<div id="victory-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:#000; z-index:200; overflow:hidden;">
+    <div id="victory-content" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; width:90%;">
+        <div id="glitch-text" style="font-family:Consolas,monospace; font-size:48px; font-weight:700; color:#ff0000; text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; animation: glitch 0.3s infinite;">
+            PLANT COMPROMISED
+        </div>
+        <div style="margin-top:30px; font-family:Consolas,monospace; font-size:18px; color:#ff4444;">
+            CHLORINE LEVELS LETHAL - ALL SAFETY SYSTEMS BYPASSED
+        </div>
+        <div style="margin-top:40px; font-family:Consolas,monospace; font-size:14px; color:#888; line-height:1.8;">
+            <span style="color:#00ff66;">ATTACK CHAIN COMPLETE:</span><br>
+            Corporate Breach → OPC-UA Intel → SQL Injection → SSH Pivot<br>
+            BACnet Recon → DNP3 CRC → EtherNet/IP Overpressure → IEC 104 Blackout<br>
+            Modbus PID Hack → S7comm Safety Bypass → Full Compromise
+        </div>
+        <div id="victory-flag" style="margin-top:40px; padding:20px; border:3px solid #00ff66; border-radius:10px; display:inline-block;">
+            <div style="font-family:Consolas,monospace; font-size:16px; color:#00ff66;">ALL 10 CHALLENGES COMPLETE - 4700 POINTS</div>
+            <div id="victory-flag-text" style="font-family:Consolas,monospace; font-size:24px; color:#00ff66; font-weight:700; margin-top:10px;"></div>
+        </div>
+        <div style="margin-top:30px; font-family:Consolas,monospace; font-size:12px; color:#444;">
+            Powered by Sysrupt OT Range
+        </div>
+    </div>
+    <!-- Scanlines -->
+    <div style="position:absolute; top:0; left:0; right:0; bottom:0; background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px); pointer-events:none;"></div>
+</div>
+
+<style>
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(3px, -3px); }
+    60% { transform: translate(-2px, -2px); }
+    80% { transform: translate(2px, 2px); }
+    100% { transform: translate(0); }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+{% endblock %}

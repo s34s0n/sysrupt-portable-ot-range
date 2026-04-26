@@ -1,0 +1,26 @@
+challenge:
+  id: 7
+  name: "deep_protocol_iec104"
+  category: "protocol"
+  difficulty: "hard"
+  points: 500
+  zone: "process"
+  description: "Access the power grid controller via IEC 60870-5-104."
+  flag:
+    value: "SYSRUPT{13c104_p0w3r_gr1d_4cc3ss}"
+    location: "PLC-5 power controller"
+  hints:
+    - delay_minutes: 15
+      text: "The power PLC uses IEC 60870-5-104, common in power grid SCADA."
+    - delay_minutes: 30
+      text: "IEC 104 is a TCP-based protocol on port 2404."
+    - delay_minutes: 45
+      text: "Send an STARTDT activation and interrogation command."
+  solution:
+    summary: "Connect to the power PLC via IEC 104 and read power system telemetry."
+    tools: ["iec104-tools", "lib60870"]
+    steps:
+      - "Connect to PLC-5 on port 2404"
+      - "Send STARTDT act frame"
+      - "Send general interrogation command"
+      - "Parse the information objects"

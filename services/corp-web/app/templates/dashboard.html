@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - CWA{% endblock %}
+{% block content %}
+<h2>Employee Dashboard</h2>
+<p>Welcome back, <strong>{{ session.get('name', 'Employee') }}</strong>. Role: {{ session.get('role', 'N/A') }}</p>
+<div class="info-cards">
+    <div class="card">
+        <h3>Plant Status</h3>
+        <p>All systems <span class="status-ok">OPERATIONAL</span></p>
+        <p>Last update: {{ now if now else '2026-04-08 10:30' }}</p>
+    </div>
+    <div class="card">
+        <h3>Announcements</h3>
+        <ul>
+            <li>SCADA upgrade scheduled for Q3 2026</li>
+            <li>Annual safety training due by April 30</li>
+            <li>New vendor badge policy effective May 1</li>
+        </ul>
+    </div>
+    <div class="card">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="{{ url_for('webmail') }}">Webmail</a></li>
+            <li><a href="{{ url_for('files_list') }}">Shared Files</a></li>
+            <li><a href="{{ url_for('admin') }}">Administration</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

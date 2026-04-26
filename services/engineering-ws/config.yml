@@ -1,0 +1,13 @@
+service:
+  name: "engineering-ws"
+  description: "Engineering workstation (PLC project files)"
+  zone: "scada"
+  ip: "10.0.3.20"
+  port: 8080
+  protocol: "http"
+
+http:
+  routes: []
+
+vulnerabilities: []
+flags: []

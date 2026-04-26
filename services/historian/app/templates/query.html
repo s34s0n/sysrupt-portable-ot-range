@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Query - Historian{% endblock %}
+{% block content %}
+<h2>Custom Query</h2>
+<div class="query-box">
+    <form method="POST">
+        <label>Filter by Source:</label>
+        <input type="text" name="source" value="{{ user_query }}" placeholder="e.g. intake" class="query-input">
+        <button type="submit">Run Query</button>
+    </form>
+    <p class="hint">Enter a source name to filter process data records.</p>
+</div>
+{% if error %}
+<div class="error">Query error: {{ error }}</div>
+{% endif %}
+{% if results is not none %}
+<h3>Results ({{ results|length }} rows)</h3>
+{% if results %}
+<div class="table-wrap">
+<table>
+    <thead><tr>{% for col in columns %}<th>{{ col }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for row in results %}
+        <tr>{% for col in columns %}<td>{{ row[col] }}</td>{% endfor %}</tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+<p>No results found.</p>
+{% endif %}
+{% endif %}
+{% endblock %}

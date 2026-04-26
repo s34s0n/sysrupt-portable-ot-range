@@ -1,0 +1,71 @@
+plc:
+  id: intake
+  name: PLC-1 Intake Pump Controller
+  description: |
+    Controls raw water intake from the reservoir into Tank T-101 via two
+    redundant centrifugal pumps (P-101A/B). Supports manual, auto, and
+    lead-lag alternation modes. Safety interlock stops all pumps and
+    closes the inlet valve on high-high tank level.
+  vendor: "Schneider Electric (emulated)"
+  model: "Modicon M340 BMX-P342020 (emulated)"
+
+network:
+  namespace: svc-plc-intake
+  bind_ip: 0.0.0.0
+  modbus_port: 502
+  web_ide_port: 8080
+
+runtime:
+  scan_period_ms: 50
+  publish_period_ms: 500
+  st_file: ladder-logic/intake_pump_control.st
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  channels:
+    physics_inputs: physics:plc:intake:inputs
+    modbus_writes: modbus.write
+    program_uploads: plc.program.uploaded
+  keys:
+    status: plc:intake:status
+    holding: plc:intake:holding
+    inputs: plc:intake:inputs
+    coils: plc:intake:coils
+    discrete: plc:intake:discrete
+    full_state: plc:intake:full_state
+
+web_ide:
+  username: openplc
+  password: openplc
+
+registers:
+  holding:
+    - { addr: 0, name: start_setpoint,   rw: RW, default: 30, units: "%",   desc: "Pump start level (% tank)" }
+    - { addr: 1, name: stop_setpoint,    rw: RW, default: 80, units: "%",   desc: "Pump stop level (% tank)" }
+    - { addr: 2, name: low_alarm_sp,     rw: RW, default: 15, units: "%",   desc: "Low-level alarm setpoint" }
+    - { addr: 3, name: high_alarm_sp,    rw: RW, default: 90, units: "%",   desc: "High-level alarm setpoint" }
+    - { addr: 4, name: pump_mode,        rw: RW, default: 1,  units: "enum", desc: "0=MAN, 1=AUTO, 2=ALT" }
+    - { addr: 5, name: system_enable,    rw: RW, default: 1,  units: "bool", desc: "Master enable" }
+    - { addr: 6, name: active_pump,      rw: RW, default: 1,  units: "enum", desc: "Lead pump in ALT mode (1 or 2)" }
+    - { addr: 7, name: reserved_7,       rw: RW, default: 0,  units: "",     desc: "Reserved" }
+    - { addr: 8, name: reserved_8,       rw: RW, default: 0,  units: "",     desc: "Reserved" }
+    - { addr: 9, name: reserved_9,       rw: RW, default: 0,  units: "",     desc: "Reserved" }
+
+  input:
+    - { addr: 0, name: tank_level,  rw: RO, default: 60,  units: "%",  desc: "Tank T-101 level" }
+    - { addr: 1, name: flow_rate,   rw: RO, default: 125, units: "LPM", desc: "Intake flow totaliser" }
+
+  coils:
+    - { addr: 0, name: pump1_cmd,    rw: RW, default: false, desc: "Pump P-101A run command" }
+    - { addr: 1, name: pump2_cmd,    rw: RW, default: false, desc: "Pump P-101B run command" }
+    - { addr: 2, name: inlet_valve,  rw: RW, default: false, desc: "Reservoir inlet isolation valve" }
+    - { addr: 3, name: outlet_valve, rw: RW, default: false, desc: "Tank outlet isolation valve" }
+    - { addr: 4, name: alarm_low,    rw: RO, default: false, desc: "Low level alarm" }
+    - { addr: 5, name: alarm_high,   rw: RO, default: false, desc: "High level alarm" }
+
+  discrete:
+    - { addr: 0, name: pump1_fb,        rw: RO, default: false, desc: "Pump P-101A run feedback" }
+    - { addr: 1, name: pump2_fb,        rw: RO, default: false, desc: "Pump P-101B run feedback" }
+    - { addr: 2, name: inlet_valve_fb,  rw: RO, default: false, desc: "Inlet valve position fb" }
+    - { addr: 3, name: outlet_valve_fb, rw: RO, default: false, desc: "Outlet valve position fb" }

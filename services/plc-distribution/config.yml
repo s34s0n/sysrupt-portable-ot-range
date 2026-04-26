@@ -1,0 +1,18 @@
+# PLC-4 Distribution - EtherNet/IP (CIP)
+name: plc-distribution
+display_name: PLC-4 Distribution
+protocol: ethernet-ip
+port: 44818
+namespace: svc-plc-distrib
+ip: 10.0.4.104
+
+tags:
+  - { name: OUTLET_PRESSURE,    type: INT, length: 10, description: "Outlet pressure x10 kPa (5 elements)" }
+  - { name: BOOSTER_FLOW,       type: INT, length: 10, description: "Booster pump flow L/min" }
+  - { name: RESERVOIR_LEVEL,    type: INT, length: 10, description: "Reservoir level x10 mm" }
+  - { name: DIST_TEMP,          type: INT, length: 10, description: "Distribution temperature x10 C" }
+  - { name: SYSTEM_STATUS,      type: INT, length: 10, description: "Bitfield: 0=running, 1=fault, 2=auto, 3=manual" }
+  - { name: OUTLET_VALVE_CMD,   type: INT, length: 10, description: "Outlet valve position setpoint (0-100)" }
+  - { name: BOOSTER_PUMP_SPEED, type: INT, length: 10, description: "Booster pump speed setpoint (0-100)" }
+  - { name: PRESSURE_SP,        type: INT, length: 10, description: "Pressure setpoint x10 kPa" }
+  - { name: MODE_SELECT,        type: INT, length: 10, description: "0=manual, 1=auto, 2=cascade" }

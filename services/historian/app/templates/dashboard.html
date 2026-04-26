@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Historian{% endblock %}
+{% block content %}
+<h2>Historian Dashboard</h2>
+<div class="stats">
+    <div class="stat-card"><h3>{{ count }}</h3><p>Total Records</p></div>
+    <div class="stat-card"><h3>4</h3><p>Data Sources</p></div>
+    <div class="stat-card"><h3>30</h3><p>Days Retention</p></div>
+</div>
+<h3>Latest Records</h3>
+<table>
+    <thead>
+        <tr><th>Timestamp</th><th>Source</th><th>Tank Level</th><th>Chlorine</th><th>pH</th><th>Temp</th><th>Flow</th></tr>
+    </thead>
+    <tbody>
+    {% for r in latest %}
+        <tr>
+            <td>{{ r['timestamp'] }}</td>
+            <td>{{ r['source'] }}</td>
+            <td>{{ r['tank_level'] }}%</td>
+            <td>{{ r['chlorine_ppm'] }} ppm</td>
+            <td>{{ r['ph'] }}</td>
+            <td>{{ r['temperature'] }}&deg;C</td>
+            <td>{{ r['flow_rate'] }} GPM</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

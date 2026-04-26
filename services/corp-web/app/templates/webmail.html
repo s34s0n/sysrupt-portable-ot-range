@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Webmail - CWA{% endblock %}
+{% block content %}
+<h2>Webmail</h2>
+<p>Inbox for <strong>{{ session.get('name', '') }}</strong> (showing all internal messages)</p>
+<div class="email-list">
+{% for email in emails %}
+    <div class="email-item {% if not email.read %}email-unread{% endif %}">
+        <div class="email-header" onclick="this.parentElement.classList.toggle('email-open')">
+            <span class="email-from">{{ email['from'] }}</span>
+            <span class="email-subject">{{ email.subject }}</span>
+            <span class="email-date">{{ email.date }}</span>
+        </div>
+        <div class="email-body">
+            <p><strong>From:</strong> {{ email['from'] }}<br>
+            <strong>To:</strong> {{ email.to }}<br>
+            <strong>Date:</strong> {{ email.date }}</p>
+            <hr>
+            <div>{{ email.body|safe }}</div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+<style>
+.email-list { max-width: 800px; }
+.email-item { border: 1px solid #ddd; margin-bottom: 4px; background: #fff; }
+.email-unread { border-left: 3px solid #0066cc; }
+.email-header { padding: 10px 15px; cursor: pointer; display: flex; gap: 15px; }
+.email-header:hover { background: #f0f4f8; }
+.email-from { font-weight: 600; min-width: 200px; }
+.email-subject { flex: 1; }
+.email-date { color: #666; font-size: 0.9em; }
+.email-body { display: none; padding: 15px; border-top: 1px solid #eee; background: #fafafa; white-space: pre-line; }
+.email-open .email-body { display: block; }
+</style>
+{% endblock %}

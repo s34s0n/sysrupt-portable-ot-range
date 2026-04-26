@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Administration - CWA{% endblock %}
+{% block content %}
+<h2>Administration Panel</h2>
+{% if denied %}
+<div class="error-msg">Access denied. Administrator privileges required.</div>
+{% else %}
+<div class="admin-panel">
+    <h3>System Configuration</h3>
+    <table class="data-table">
+        <tr><td>SCADA Server</td><td>10.0.3.10:8080</td><td><span class="status-ok">Online</span></td></tr>
+        <tr><td>Historian DB</td><td>10.0.2.10:8080</td><td><span class="status-ok">Online</span></td></tr>
+        <tr><td>OPC-UA Gateway</td><td>10.0.2.30:4840</td><td><span class="status-ok">Online</span></td></tr>
+        <tr><td>Safety SIS</td><td>10.0.5.201</td><td><span class="status-ok">Online</span></td></tr>
+    </table>
+    <div class="flag-box">
+        <h3>CTF Flag</h3>
+        <p>Congratulations! You found the admin panel with default credentials.</p>
+        <code>{{ flag }}</code>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

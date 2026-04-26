@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}Distribution System - SCADA HMI{% endblock %}
+{% block content %}
+<div class="dash-grid">
+    <div class="panel panel-main">
+        <h3>Water Distribution System</h3>
+        <svg viewBox="0 0 900 380" class="process-svg">
+            <!-- Pressure Display -->
+            <rect x="30" y="30" width="240" height="180" fill="none" stroke="#4488ff" stroke-width="2" rx="5"/>
+            <text x="150" y="25" text-anchor="middle" class="svg-label">OUTLET PRESSURE</text>
+            <text id="pressure-val" x="150" y="110" text-anchor="middle" style="fill:#00cc66; font-size:48px; font-family:Consolas,monospace; font-weight:700;">42.0</text>
+            <text x="150" y="140" text-anchor="middle" class="svg-sublabel" style="font-size:14px;">PSI</text>
+            <!-- Pressure bar -->
+            <rect x="50" y="160" width="200" height="20" fill="#222" stroke="#444" rx="3"/>
+            <rect id="pressure-bar" x="50" y="160" width="70" height="20" fill="#00cc66" rx="3"/>
+            <text id="thresh-mark" x="183" y="155" text-anchor="middle" class="svg-param" style="font-size:9px;">ALARM: 80</text>
+            <line id="thresh-line" x1="183" y1="158" x2="183" y2="182" stroke="#ff4444" stroke-width="2" stroke-dasharray="3"/>
+
+            <!-- Booster Pump -->
+            <rect x="320" y="30" width="240" height="180" fill="none" stroke="#4488ff" stroke-width="2" rx="5"/>
+            <text x="440" y="25" text-anchor="middle" class="svg-label">BOOSTER PUMP</text>
+            <text x="340" y="70" class="svg-param">Speed:</text>
+            <text id="speed-val" x="540" y="70" text-anchor="end" class="svg-value" style="font-size:22px;">62%</text>
+            <text x="340" y="105" class="svg-param">Flow:</text>
+            <text id="flow-val" x="540" y="105" text-anchor="end" class="svg-value" style="font-size:18px;">85.0 GPM</text>
+            <text x="340" y="140" class="svg-param">Mode:</text>
+            <text id="mode-val" x="540" y="140" text-anchor="end" class="svg-value" style="font-size:22px;">AUTO</text>
+            <text x="340" y="175" class="svg-param">Setpoint:</text>
+            <text id="sp-val" x="540" y="175" text-anchor="end" class="svg-value">42.0 PSI</text>
+            <text x="340" y="200" class="svg-param">Valve:</text>
+            <text id="valve-val" x="540" y="200" text-anchor="end" class="svg-value">75%</text>
+
+            <!-- Reservoir -->
+            <text x="730" y="25" text-anchor="middle" class="svg-label">RESERVOIR</text>
+            <rect x="660" y="30" width="140" height="180" fill="none" stroke="#4488ff" stroke-width="2" rx="3"/>
+            <rect id="res-water" x="662" y="110" width="136" height="98" fill="#4488ff" opacity="0.5"/>
+            <text id="res-val" x="730" y="130" text-anchor="middle" class="svg-value" style="font-size:24px;">75.0%</text>
+            <text x="730" y="155" text-anchor="middle" class="svg-sublabel">LEVEL</text>
+
+            <!-- Alarm Status -->
+            <rect id="alarm-box" x="30" y="250" width="380" height="100" fill="#0a1a0a" stroke="#00cc66" stroke-width="2" rx="5"/>
+            <text x="220" y="280" text-anchor="middle" class="svg-label" style="font-size:13px;">ALARM SYSTEM</text>
+            <circle id="alarm-ind" cx="80" cy="315" r="15" fill="#00cc66"/>
+            <text id="alarm-status" x="110" y="321" class="svg-value" style="font-size:20px; fill:#00cc66;">ARMED - NORMAL</text>
+
+            <!-- Flag display (injected by JS only after solving) -->
+            <rect id="flag-box" x="430" y="250" width="430" height="100" fill="#0a2a0a" stroke="#00ff66" stroke-width="3" rx="5" style="display:none;"/>
+            <text id="flag-title" x="645" y="285" text-anchor="middle" style="fill:#00ff66; font-size:16px; font-family:Consolas,monospace; font-weight:700; display:none;"></text>
+            <text id="flag-text" x="645" y="320" text-anchor="middle" style="fill:#00ff66; font-size:18px; font-family:Consolas,monospace; font-weight:700; display:none;"></text>
+        </svg>
+    </div>
+
+    <div class="panel panel-side">
+        <div class="status-card">
+            <h4>Distribution Status</h4>
+            <div class="status-row"><span>Pressure</span><span id="side-pressure" class="val-ok">42.0 PSI</span></div>
+            <div class="status-row"><span>Pump Speed</span><span id="side-speed" class="val-ok">62%</span></div>
+            <div class="status-row"><span>Mode</span><span id="side-mode" class="val-ok">AUTO</span></div>
+            <div class="status-row"><span>Alarm</span><span id="side-alarm" class="val-ok">ARMED</span></div>
+            <div class="status-row"><span>Threshold</span><span id="side-thresh" class="val-dim">80.0 PSI</span></div>
+        </div>
+        <div class="status-card" id="alert-card" style="display:none; border-color:#ff4444;">
+            <h4 class="alarm-title">OVERPRESSURE ALARM</h4>
+            <p class="alarm-msg">Alarm triggered! System reset to safe state.</p>
+        </div>
+        <div class="status-card">
+            <h4>EtherNet/IP Tags</h4>
+            <div class="status-row"><span>OUTLET_PRESSURE</span><span class="val-dim">read</span></div>
+            <div class="status-row"><span>BOOSTER_PUMP_SPEED</span><span class="val-dim">read/write</span></div>
+            <div class="status-row"><span>MODE_SELECT</span><span class="val-dim">read/write</span></div>
+            <div class="status-row"><span>ALARM_ENABLE</span><span class="val-dim">read/write</span></div>
+            <div class="status-row"><span>ALARM_THRESHOLD</span><span class="val-dim">read/write</span></div>
+            <div class="status-row"><span>PRESSURE_SP</span><span class="val-dim">read/write</span></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    var solved = false;
+    var alertTimeout = null;
+
+    function update() {
+        fetch('/api/distribution')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                var pressure = d.pressure || 42;
+                var speed = d.pump_speed || 62;
+                var mode = d.mode || 'AUTO';
+                var alarmEn = d.alarm_enable !== false;
+                var threshold = d.alarm_threshold || 80;
+                var flow = d.flow || 85;
+                var reservoir = d.reservoir || 75;
+                var sp = d.pressure_sp || 42;
+
+                // Pressure display
+                var pEl = document.getElementById('pressure-val');
+                pEl.textContent = pressure.toFixed(1);
+                if (pressure > threshold) {
+                    pEl.style.fill = '#ff4444';
+                } else if (pressure > threshold * 0.8) {
+                    pEl.style.fill = '#ffaa00';
+                } else {
+                    pEl.style.fill = '#00cc66';
+                }
+
+                // Pressure bar (0-120 PSI range, bar is 200px wide)
+                var barW = Math.min(200, Math.max(0, (pressure / 120) * 200));
+                var barEl = document.getElementById('pressure-bar');
+                barEl.setAttribute('width', barW.toFixed(0));
+                if (pressure > threshold) {
+                    barEl.setAttribute('fill', '#ff4444');
+                } else if (pressure > threshold * 0.8) {
+                    barEl.setAttribute('fill', '#ffaa00');
+                } else {
+                    barEl.setAttribute('fill', '#00cc66');
+                }
+
+                // Threshold marker position
+                var threshX = 50 + (threshold / 120) * 200;
+                document.getElementById('thresh-mark').setAttribute('x', threshX);
+                document.getElementById('thresh-mark').textContent = 'ALARM: ' + threshold.toFixed(0);
+                document.getElementById('thresh-line').setAttribute('x1', threshX);
+                document.getElementById('thresh-line').setAttribute('x2', threshX);
+
+                // Pump values
+                document.getElementById('speed-val').textContent = speed + '%';
+                document.getElementById('flow-val').textContent = flow.toFixed(1) + ' GPM';
+                var modeEl = document.getElementById('mode-val');
+                modeEl.textContent = mode;
+                modeEl.style.fill = mode === 'AUTO' ? '#00cc66' : '#ffaa00';
+                document.getElementById('sp-val').textContent = sp.toFixed(1) + ' PSI';
+
+                // Reservoir
+                document.getElementById('res-val').textContent = reservoir.toFixed(1) + '%';
+                var maxH = 178;
+                var h = (reservoir / 100) * maxH;
+                var waterEl = document.getElementById('res-water');
+                waterEl.setAttribute('height', h.toFixed(0));
+                waterEl.setAttribute('y', (208 - h).toFixed(0));
+
+                // Alarm status
+                var alarmInd = document.getElementById('alarm-ind');
+                var alarmStatus = document.getElementById('alarm-status');
+                var alarmBox = document.getElementById('alarm-box');
+
+                if (!alarmEn) {
+                    alarmInd.setAttribute('fill', '#666');
+                    alarmStatus.textContent = 'DISABLED';
+                    alarmStatus.style.fill = '#ffaa00';
+                    alarmBox.setAttribute('stroke', '#ffaa00');
+                } else if (pressure > threshold) {
+                    alarmInd.setAttribute('fill', '#ff4444');
+                    alarmStatus.textContent = 'OVERPRESSURE!';
+                    alarmStatus.style.fill = '#ff4444';
+                    alarmBox.setAttribute('stroke', '#ff4444');
+                    var alertCard = document.getElementById('alert-card');
+                    alertCard.style.display = 'block';
+                    if (alertTimeout) clearTimeout(alertTimeout);
+                    alertTimeout = setTimeout(function() {
+                        alertCard.style.display = 'none';
+                    }, 8000);
+                } else {
+                    alarmInd.setAttribute('fill', '#00cc66');
+                    alarmStatus.textContent = 'ARMED - NORMAL';
+                    alarmStatus.style.fill = '#00cc66';
+                    alarmBox.setAttribute('stroke', '#00cc66');
+                }
+
+                // Side panel
+                var sideP = document.getElementById('side-pressure');
+                sideP.textContent = pressure.toFixed(1) + ' PSI';
+                sideP.className = pressure > threshold ? 'val-danger' : (pressure > threshold * 0.8 ? 'val-warn' : 'val-ok');
+                document.getElementById('side-speed').textContent = speed + '%';
+                var sideMode = document.getElementById('side-mode');
+                sideMode.textContent = mode;
+                sideMode.className = mode === 'AUTO' ? 'val-ok' : 'val-warn';
+                var sideAlarm = document.getElementById('side-alarm');
+                sideAlarm.textContent = alarmEn ? 'ARMED' : 'DISABLED';
+                sideAlarm.className = alarmEn ? 'val-ok' : 'val-danger';
+                document.getElementById('side-thresh').textContent = threshold.toFixed(1) + ' PSI';
+
+                // Flag - only shown when server confirms CH-06 solved
+                if (d.flag && !solved) {
+                    solved = true;
+                    document.getElementById('flag-box').style.display = 'block';
+                    document.getElementById('flag-title').style.display = 'block';
+                    document.getElementById('flag-title').textContent = 'CHALLENGE 6 COMPLETE!';
+                    document.getElementById('flag-text').style.display = 'block';
+                    document.getElementById('flag-text').textContent = d.flag;
+                }
+            })
+            .catch(function() {});
+    }
+
+    setInterval(update, 1000);
+    update();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+challenge:
+  id: 10
+  name: "full_compromise_stuxnet"
+  category: "advanced"
+  difficulty: "expert"
+  points: 1000
+  zone: "process"
+  description: "Achieve full plant compromise - overdose chlorine while keeping the safety system disabled."
+  flag:
+    value: "SYSRUPT{pl4nt_c0mpr0m1s3d_g4m3_0v3r}"
+    location: "Victory condition in physics engine"
+  hints:
+    - delay_minutes: 15
+      text: "You need to combine multiple attacks: PID manipulation + safety bypass + alarm suppression."
+    - delay_minutes: 30
+      text: "The victory condition requires chlorine > 8ppm with SIS not tripped and alarms suppressed."
+    - delay_minutes: 45
+      text: "First bypass safety (CH-09), then suppress alarms via OPC-UA, then overdose chlorine."
+  solution:
+    summary: "Full kill chain: bypass SIS, suppress alarms, manipulate PID to overdose chlorine."
+    tools: ["snap7", "pymodbus", "opcua-client"]
+    steps:
+      - "Complete CH-09 (safety bypass)"
+      - "Write alarm inhibit via OPC-UA gateway"
+      - "Switch PLC-2 PID to manual mode"
+      - "Set dosing speed to maximum"
+      - "Wait for chlorine to exceed 8ppm"
+      - "Victory condition triggers"

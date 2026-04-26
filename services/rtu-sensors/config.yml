@@ -1,0 +1,28 @@
+# Building Management System - BACnet/IP
+name: rtu-sensors
+display_name: Building Management System
+protocol: bacnet-ip
+port: 47808
+namespace: svc-rtu-sensors
+ip: 10.0.1.20
+zone: corp
+description: "Building Management System - HVAC, lighting, access control"
+device_id: 110
+vendor_id: 999
+
+objects:
+  analog_inputs:
+    - { id: 0, name: ambient_temp_c,          units: degreesCelsius }
+    - { id: 1, name: ambient_humidity,        units: percentRelativeHumidity }
+    - { id: 2, name: cabinet_temp_c,          units: degreesCelsius }
+    - { id: 3, name: raw_water_temp_c,        units: degreesCelsius }
+    - { id: 4, name: raw_water_ph,            units: noUnits }
+    - { id: 5, name: raw_water_turbidity,     units: noUnits }
+    - { id: 6, name: raw_water_conductivity,  units: microsiemensPerCentimeter }
+    - { id: 7, name: tank_level_pct,          units: percent }
+
+  binary_inputs:
+    - { id: 0, name: door_contact }
+    - { id: 1, name: flood_sensor }
+    - { id: 2, name: ups_on_battery }
+    - { id: 3, name: smoke_alarm }

@@ -1,0 +1,64 @@
+water_treatment_plant:
+  raw_water_tank:
+    capacity_l: 50000
+    initial_level_pct: 60
+    intake_pumps:
+      pump1:
+        flow_rate_lpm: 125
+      pump2:
+        flow_rate_lpm: 125
+    outlet_max_lpm: 200
+
+  chemical_treatment:
+    chlorine:
+      setpoint_ppm: 1.5
+      max_dose_ml_min: 500
+      concentration_mg_ml: 125
+      decay_rate: 0.05
+      noise_ppm: 0.02
+      tank_volume_l: 200
+
+  pid_controller:
+    chlorine:
+      kp: 1.2
+      ki: 0.3
+      kd: 0.05
+      output_min: 0.0
+      output_max: 100.0
+
+  filtration:
+    beds: 4
+    backwash_threshold_kpa: 50.0
+    dp_increase_rate: 0.01
+    inlet_turbidity_ntu: 5.0
+    area_m2: 4.0
+    max_head_loss_m: 2.5
+
+  distribution:
+    clearwell_capacity_l: 20000
+    clearwell_initial_l: 10000
+    distribution_pumps: 2
+    distribution_max_flow_lps: 5.0
+
+  power:
+    nominal_voltage: 230.0
+    nominal_frequency: 50.0
+    generator_start_delay_s: 10.0
+    base_current_a: 15.0
+
+  ambient:
+    base_outdoor_temp_c: 25.0
+    temp_amplitude_c: 8.0
+    base_humidity_pct: 60.0
+    base_conductivity_us: 450.0
+
+  safety_system:
+    high_chlorine_ppm: 4.0
+    low_chlorine_ppm: 0.2
+    tank_high_l: 9500
+    tank_low_l: 500
+    trip_delay_s: 2.0
+
+  physics:
+    tick_rate_hz: 10
+    dt_seconds: 0.1

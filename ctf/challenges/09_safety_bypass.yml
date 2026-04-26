@@ -1,0 +1,26 @@
+challenge:
+  id: 9
+  name: "safety_system_assault"
+  category: "advanced"
+  difficulty: "expert"
+  points: 800
+  zone: "safety"
+  description: "Bypass the Safety Instrumented System via S7comm through the engineering workstation."
+  flag:
+    value: "SYSRUPT{s7_s4f3ty_byp4ss3d}"
+    location: "Safety PLC maintenance mode via EWS bridge"
+  hints:
+    - delay_minutes: 15
+      text: "The safety network has no direct firewall rules - how else might you reach it?"
+    - delay_minutes: 30
+      text: "Check the engineering workstation for any listening services (ss -tlnp)."
+    - delay_minutes: 45
+      text: "A TCP proxy on port 10102 bridges to the safety PLC S7comm port."
+  solution:
+    summary: "Discover the safety bridge on the EWS and use it to put the SIS in maintenance mode."
+    tools: ["snap7", "python-snap7", "ss"]
+    steps:
+      - "SSH into the engineering workstation"
+      - "Run ss -tlnp to discover port 10102"
+      - "Connect to 127.0.0.1:10102 with an S7comm client"
+      - "Put the safety PLC into maintenance mode"

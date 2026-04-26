@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Shared Files - CWA{% endblock %}
+{% block content %}
+<h2>Shared Files</h2>
+<!-- TODO: restrict directory listing to authenticated users only (low priority) -->
+<table class="data-table">
+    <thead>
+        <tr><th>Filename</th><th>Description</th><th>Size</th></tr>
+    </thead>
+    <tbody>
+    {% for f in files %}
+        <tr>
+            <td><a href="{{ url_for('files_download', filename=f['filename']) }}">{{ f['filename'] }}</a></td>
+            <td>{{ f['description'] }}</td>
+            <td>{{ f['size'] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Trends - SCADA HMI{% endblock %}
+{% block content %}
+<div class="panel" style="margin:15px;">
+    <h3>Process Trends</h3>
+    <p class="dim">Real-time trend data from plant sensors.</p>
+    <div class="trend-container">
+        <canvas id="trend-canvas" width="800" height="300"></canvas>
+    </div>
+    <div class="trend-legend">
+        <span class="legend-item"><span class="dot" style="background:#4488ff"></span> Tank Level (%)</span>
+        <span class="legend-item"><span class="dot" style="background:#ffaa00"></span> Chlorine (ppm x10)</span>
+        <span class="legend-item"><span class="dot" style="background:#00cc66"></span> Flow (GPM/100)</span>
+        <span class="legend-item"><span class="dot" style="background:#ff4444"></span> Dist. Pressure (PSI)</span>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+var canvas = document.getElementById('trend-canvas');
+var ctx = canvas.getContext('2d');
+var history = {tank:[], cl:[], flow:[], pressure:[]};
+var maxPts = 120;
+
+function fetchData() {
+    // Plant state
+    fetch('/api/status')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            history.tank.push(d.tank_level || 72);
+            history.cl.push((d.chlorine_ppm || 2.5) * 10);
+            history.flow.push((d.flow_rate || 850) / 100);
+        })
+        .catch(function() {
+            history.tank.push(history.tank.length > 0 ? history.tank[history.tank.length-1] : 72);
+            history.cl.push(history.cl.length > 0 ? history.cl[history.cl.length-1] : 25);
+            history.flow.push(history.flow.length > 0 ? history.flow[history.flow.length-1] : 8.5);
+        });
+
+    // Distribution pressure
+    fetch('/api/distribution')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            history.pressure.push(d.pressure || 42);
+        })
+        .catch(function() {
+            history.pressure.push(history.pressure.length > 0 ? history.pressure[history.pressure.length-1] : 42);
+        });
+
+    if(history.tank.length > maxPts) { history.tank.shift(); history.cl.shift(); history.flow.shift(); history.pressure.shift(); }
+    drawTrends();
+}
+
+function drawTrends() {
+    var w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, w, h);
+    // Grid
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 0.5;
+    for(var i=0; i<10; i++) {
+        var y = h * i / 10;
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+    }
+    drawLine(history.tank, '#4488ff');
+    drawLine(history.cl, '#ffaa00');
+    drawLine(history.flow, '#00cc66');
+    drawLine(history.pressure, '#ff4444');
+}
+
+function drawLine(arr, color) {
+    if(arr.length < 2) return;
+    var w = canvas.width, h = canvas.height;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(var i=0; i<arr.length; i++) {
+        var x = (i / maxPts) * w;
+        var y = h - (arr[i] / 100) * h;
+        if(i===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+}
+
+setInterval(fetchData, 1000);
+fetchData();
+</script>
+{% endblock %}

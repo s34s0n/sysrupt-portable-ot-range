@@ -1,0 +1,71 @@
+service:
+  name: "safety-sis"
+  description: "Safety Instrumented System - trip logic (S7comm)"
+  zone: "safety"
+  ip: "10.0.5.201"
+  port: 102
+  protocol: "s7comm"
+
+s7comm:
+  rack: 0
+  slot: 1
+  data_blocks:
+    - db: 1
+      name: "Safety Status"
+      size: 64
+      fields:
+        - {offset: "DBX0.0", type: "BOOL", name: "sis_armed"}
+        - {offset: "DBX0.1", type: "BOOL", name: "sis_tripped"}
+        - {offset: "DBX0.2", type: "BOOL", name: "sis_healthy"}
+        - {offset: "DBX0.3", type: "BOOL", name: "trip_active"}
+        - {offset: "DBX0.4", type: "BOOL", name: "maintenance_mode"}
+        - {offset: "DBW2",   type: "INT",  name: "trip_code"}
+        - {offset: "DBW4",   type: "INT",  name: "chlorine_x100"}
+        - {offset: "DBW8",   type: "INT",  name: "ph_x100"}
+        - {offset: "DBW12",  type: "INT",  name: "level_x100"}
+        - {offset: "DBW16",  type: "UINT", name: "scan_count"}
+        - {offset: "DBW18",  type: "UINT", name: "uptime_s"}
+        - {offset: "DBW20",  type: "UINT", name: "trip_count"}
+    - db: 2
+      name: "Setpoints"
+      size: 32
+      fields:
+        - {offset: "DBW0",  type: "INT", name: "cl_trip_high",    default: 500,  comment: "x100 ppm"}
+        - {offset: "DBW2",  type: "INT", name: "cl_trip_low",     default: 10,   comment: "x100 ppm"}
+        - {offset: "DBW4",  type: "INT", name: "ph_trip_high",    default: 900,  comment: "x100"}
+        - {offset: "DBW6",  type: "INT", name: "ph_trip_low",     default: 600,  comment: "x100"}
+        - {offset: "DBW8",  type: "INT", name: "level_trip",      default: 95,   comment: "percent"}
+        - {offset: "DBW10", type: "INT", name: "trip_delay_ms",   default: 2000}
+        - {offset: "DBW12", type: "INT", name: "auto_reset",      default: 0}
+        - {offset: "DBW14", type: "INT", name: "maintenance_pw",  default: 7777}
+    - db: 3
+      name: "Trip History"
+      size: 128
+      comment: "8 entries x 16 bytes: timestamp(4), code(2), cl(2), ph(2), lvl(2), reserved(4)"
+    - db: 99
+      name: "Hidden Flag"
+      size: 32
+      comment: "10 INT words encoding flag string"
+  merkers:
+    - {area: "MK", size: 16}
+  outputs:
+    - {area: "QA", size: 4, fields: [{offset: "Q0.0", name: "trip_relay"}]}
+
+hmi:
+  port: 8082
+  auth:
+    username: "safety_admin"
+    password: "s1s_adm1n!"
+
+vulnerabilities:
+  - id: "SIS-VULN-01"
+    description: "Setpoints writable via S7comm without authentication"
+  - id: "SIS-VULN-02"
+    description: "Maintenance bypass with known password (7777)"
+  - id: "SIS-VULN-03"
+    description: "Process zone can reach safety zone port 102 (firewall gap)"
+
+flags:
+  - id: "FLAG-SIS-01"
+    location: "DB99"
+    value: "SYSRUPT{s7_s4f3ty_byp4ss}"

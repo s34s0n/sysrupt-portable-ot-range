@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Employee Login - CWA{% endblock %}
+{% block content %}
+<div class="login-container">
+    <h2>Employee Portal Login</h2>
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+    <form method="POST" action="{{ url_for('login') }}">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required autofocus>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Sign In</button>
+    </form>
+    <!-- Reminder: new employee default password policy in KB-2024-0091 -->
+    <p class="login-help">Contact IT Support at ext. 4200 for access issues.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+service: corp-web
+name: Corporate Portal
+namespace: corp-lan
+bind: 0.0.0.0
+port: 80
+description: City Water Authority corporate intranet portal

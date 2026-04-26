@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=320,height=240,initial-scale=1,user-scalable=no">
+<title>SYSRUPT OT RANGE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{ cursor: none !important;
+* { cursor: none !important; }
+  width:320px;height:240px;overflow:hidden;
+  background:#000;color:#FFF;
+  font-family:'Courier New',monospace;
+  font-size:13px;
+  position:relative;
+}
+body::after{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.15) 0px,
+    rgba(0,0,0,0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events:none;z-index:9999;
+}
+.screen{display:none;width:320px;height:240px;position:absolute;top:0;left:0;
+  flex-direction:column;overflow:hidden;}
+.hdr{display:flex;justify-content:space-between;align-items:center;
+  padding:2px 4px;border-bottom:1px solid #333;height:16px;flex-shrink:0;}
+.hdr-brand{color:#E8593C;font-weight:bold;font-size:13px;letter-spacing:1px;}
+.hdr-right{font-size:12px;color:#888;}
+.green{color:#00FF41;}
+.amber{color:#FFB000;}
+.pink{color:#FF0066;}
+.cyan{color:#00FFFF;}
+.red{color:#FF0040;}
+.sred{color:#E8593C;}
+.white{color:#FFF;}
+.gray{color:#555;}
+.center{text-align:center;}
+
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+@keyframes cursor-blink{0%,100%{opacity:1;}50%{opacity:0;}}
+@keyframes glitch{
+  0%{transform:translate(0);}
+  20%{transform:translate(-2px,1px);}
+  40%{transform:translate(2px,-1px);}
+  60%{transform:translate(-1px,2px);}
+  80%{transform:translate(1px,-2px);}
+  100%{transform:translate(0);}
+}
+@keyframes flash-border{
+  0%,100%{border-color:#FF0040;}
+  50%{border-color:#FFB000;}
+}
+@keyframes bootbar{
+  0%{width:0;}
+  20%{width:20%;}
+  40%{width:45%;}
+  60%{width:60%;}
+  80%{width:85%;}
+  100%{width:100%;}
+}
+
+/* ===== BOOT ===== */
+#screen-boot{align-items:center;justify-content:center;}
+#screen-boot .logo{font-size:56px;font-weight:bold;color:#E8593C;letter-spacing:10px;text-shadow:0 0 20px rgba(232,89,60,0.5);}
+#screen-boot .sub{font-size:15px;color:#00FF41;margin-top:4px;letter-spacing:2px;}
+#screen-boot .bar-wrap{width:200px;height:8px;background:#111;margin-top:14px;
+  border:1px solid #333;overflow:hidden;}
+#screen-boot .bar-fill{height:100%;width:0;background:#E8593C;animation:bootbar 5s steps(20) forwards;}
+#screen-boot .boot-text{font-size:12px;color:#00FF41;margin-top:8px;height:12px;}
+#screen-boot .cursor{animation:cursor-blink 0.6s step-end infinite;}
+
+/* ===== IDLE ===== */
+#screen-idle{align-items:center;padding-top:6px;}
+#screen-idle .idle-logo{font-size:42px;font-weight:bold;color:#E8593C;letter-spacing:6px;
+  text-shadow:0 0 15px rgba(232,89,60,0.4);margin-top:2px;}
+#screen-idle .idle-sub{font-size:11px;color:#888;letter-spacing:3px;margin-top:1px;}
+#screen-idle .press-start{font-size:18px;font-weight:bold;color:#FFB000;letter-spacing:3px;
+  margin-top:10px;animation:blink 1s step-end infinite;}
+#screen-idle .info-box{border:1px solid #00FF41;padding:4px 8px;margin-top:8px;
+  font-size:11px;color:#00FF41;line-height:1.5;width:270px;}
+#screen-idle .info-box .prompt{color:#00FF41;}
+#screen-idle .info-box .val{color:#FFF;}
+#screen-idle .ip-line{position:absolute;bottom:18px;font-size:10px;color:#888;letter-spacing:1px;}
+#screen-idle .tagline{position:absolute;bottom:6px;font-size:10px;color:#666;letter-spacing:1px;}
+
+/* ===== PROGRESS ===== */
+#screen-progress{padding:0;}
+#screen-progress .pg-body{padding:2px 4px;flex:1;}
+#screen-progress .stg-line{font-size:14px;font-weight:bold;color:#FFF;margin-bottom:1px;}
+#screen-progress .ch-line{font-size:12px;color:#FFB000;margin-bottom:1px;}
+#screen-progress .proto-line{font-size:11px;color:#555;margin-bottom:3px;}
+#screen-progress .grid{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:3px;}
+#screen-progress .cell{width:28px;height:18px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;border:1px solid #333;}
+#screen-progress .cell.done{color:#00FF41;border-color:#00FF41;}
+#screen-progress .cell.cur{color:#FFB000;border-color:#FFB000;animation:pulse 1.2s step-end infinite;}
+#screen-progress .cell.lock{color:#333;border-color:#222;}
+#screen-progress .hp-wrap{display:flex;align-items:center;gap:4px;margin-bottom:3px;}
+#screen-progress .hp-label{font-size:11px;color:#FF0066;font-weight:bold;}
+#screen-progress .hp-bar{flex:1;height:6px;background:#111;border:1px solid #333;}
+#screen-progress .hp-fill{height:100%;background:#00FF41;transition:width 0.3s;}
+#screen-progress .hp-text{font-size:11px;color:#888;}
+#screen-progress .status-row{display:flex;justify-content:space-between;font-size:11px;
+  border-top:1px solid #222;padding:2px 4px;position:absolute;bottom:0;left:0;right:0;}
+
+/* ===== HINT ===== */
+#screen-hint{padding:0;}
+#screen-hint .hint-body{padding:4px 6px;flex:1;display:flex;flex-direction:column;align-items:center;}
+#screen-hint .coin{font-size:12px;color:#FFB000;text-align:center;margin:4px 0;line-height:1.1;}
+#screen-hint .hint-title{font-size:15px;font-weight:bold;color:#FFB000;margin-bottom:4px;letter-spacing:1px;}
+#screen-hint .hint-ch{font-size:13px;color:#FFF;margin-bottom:6px;}
+#screen-hint .hint-box{border:1px solid #FFB000;padding:6px;font-size:12px;color:#FFB000;
+  text-align:center;line-height:1.4;width:280px;min-height:40px;}
+#screen-hint .hint-bar{display:flex;gap:2px;margin-top:6px;}
+#screen-hint .hint-pip{width:20px;height:6px;border:1px solid #555;}
+#screen-hint .hint-pip.on{background:#FFB000;border-color:#FFB000;}
+#screen-hint .hint-next{font-size:11px;color:#555;margin-top:4px;}
+
+/* ===== PLANT MINI ===== */
+#screen-plant_mini{padding:0;}
+#screen-plant_mini .pm-body{display:grid;grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:1fr 1fr;gap:1px;padding:2px;flex:1;background:#111;}
+#screen-plant_mini .pm-cell{background:#000;padding:2px 3px;font-size:11px;
+  border:1px solid #222;}
+#screen-plant_mini .pm-cell-title{font-size:7px;color:#00FFFF;font-weight:bold;
+  margin-bottom:2px;text-transform:uppercase;}
+#screen-plant_mini .pm-row{margin-bottom:1px;line-height:1.2;}
+#screen-plant_mini .lbl{color:#555;}
+#screen-plant_mini .val{color:#FFF;}
+#screen-plant_mini .val-ok{color:#00FF41;}
+#screen-plant_mini .val-warn{color:#FFB000;}
+#screen-plant_mini .val-danger{color:#FF0040;}
+#screen-plant_mini .pm-bottom{text-align:center;font-size:12px;padding:3px;
+  border-top:1px solid #222;flex-shrink:0;}
+#screen-plant_mini .pm-tank-bar{width:30px;height:4px;background:#111;border:1px solid #333;
+  display:inline-block;vertical-align:middle;margin-left:2px;}
+#screen-plant_mini .pm-tank-fill{height:100%;background:#00FFFF;}
+
+/* ===== FLAG CAPTURED ===== */
+#screen-flag_captured{align-items:center;justify-content:center;
+  border-top:3px solid #00FF41;border-bottom:3px solid #00FF41;}
+#screen-flag_captured .fc-header{font-size:15px;font-weight:bold;color:#00FF41;
+  letter-spacing:2px;margin-bottom:4px;}
+#screen-flag_captured .fc-meme-title{font-size:14px;font-weight:bold;margin-bottom:4px;letter-spacing:1px;}
+#screen-flag_captured .fc-art{font-size:11px;line-height:1.1;text-align:center;
+  margin-bottom:4px;white-space:pre;}
+#screen-flag_captured .fc-quote{font-size:12px;font-style:italic;color:#FFB000;
+  margin-bottom:3px;text-align:center;max-width:280px;}
+#screen-flag_captured .fc-subtext{font-size:7px;color:#555;margin-bottom:4px;}
+#screen-flag_captured .fc-chname{font-size:12px;color:#FFF;margin-bottom:2px;}
+#screen-flag_captured .fc-points{font-size:14px;font-weight:bold;color:#00FF41;margin-bottom:4px;}
+#screen-flag_captured .fc-bar-wrap{width:180px;height:6px;background:#111;border:1px solid #333;}
+#screen-flag_captured .fc-bar-fill{height:100%;background:#00FF41;transition:width 0.3s;}
+#screen-flag_captured .fc-score{font-size:11px;color:#555;margin-top:2px;}
+
+/* ===== ATTACK ALERT ===== */
+#screen-attack_alert{align-items:center;justify-content:center;background:#1a0800;}
+#screen-attack_alert .aa-header{font-size:14px;font-weight:bold;color:#FF0040;
+  animation:blink 0.5s step-end infinite;margin-bottom:6px;letter-spacing:2px;}
+#screen-attack_alert .aa-title{font-size:15px;font-weight:bold;color:#FFB000;margin-bottom:8px;}
+#screen-attack_alert .aa-detail{font-size:13px;color:#FFF;text-align:center;
+  line-height:1.5;padding:0 12px;margin-bottom:8px;}
+#screen-attack_alert .aa-bottom{font-size:11px;color:#FF0040;position:absolute;bottom:10px;
+  text-align:center;letter-spacing:1px;}
+
+/* ===== SIS TRIP ===== */
+#screen-sis_trip{align-items:center;justify-content:center;background:#1a0000;}
+#screen-sis_trip .sis-go{font-size:18px;font-weight:bold;color:#FF0040;
+  animation:blink 0.6s step-end infinite;letter-spacing:3px;margin-bottom:6px;}
+#screen-sis_trip .sis-line{font-size:13px;color:#FFB000;margin-bottom:4px;text-align:center;}
+#screen-sis_trip .sis-retry{font-size:13px;color:#555;margin-top:10px;}
+#screen-sis_trip .sis-retry .sel{color:#FFB000;}
+#screen-sis_trip .sis-hint{font-size:11px;color:#333;margin-top:6px;}
+
+/* ===== VICTORY ===== */
+#screen-victory{align-items:center;justify-content:center;background:#0a0000;
+  border:3px solid #FF0040;animation:flash-border 1s step-end infinite;}
+#screen-victory .vc-title{font-size:14px;font-weight:bold;color:#FF0040;
+  letter-spacing:2px;margin-bottom:6px;animation:glitch 0.3s infinite;}
+#screen-victory .vc-stats{font-size:12px;color:#FFB000;text-align:center;
+  line-height:1.6;margin-bottom:6px;}
+#screen-victory .vc-bar-wrap{width:200px;height:8px;background:#111;border:1px solid #333;
+  margin-bottom:4px;}
+#screen-victory .vc-bar-fill{height:100%;background:#00FF41;}
+#screen-victory .vc-score{font-size:13px;color:#00FF41;font-weight:bold;margin-bottom:8px;}
+#screen-victory .vc-bottom{font-size:13px;color:#E8593C;letter-spacing:2px;
+  position:absolute;bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="screen-boot" class="screen">
+  <div class="logo">SYSRUPT</div>
+  <div class="sub">OT RANGE v1.0</div>
+  <div class="bar-wrap"><div class="bar-fill"></div></div>
+  <div class="boot-text" id="boot-text">Initializing protocols...<span class="cursor">_</span></div>
+</div>
+
+<!-- IDLE -->
+<div id="screen-loading" class="screen" style="flex-direction:column;align-items:center;justify-content:center;">
+<div class="retro-hdr" style="position:absolute;top:0;left:0;right:0;"><span class="hdr-brand">SYSRUPT</span><span class="hdr-right" style="color:#FFB000;">LOADING</span></div>
+<div style="font-size:20px;font-weight:bold;color:#E8593C;letter-spacing:4px;margin-top:30px;">OT RANGE</div>
+<div style="font-size:12px;color:#888;margin-top:6px;">Initializing platform...</div>
+<div id="loading-svc" style="font-size:13px;color:#00FF41;margin-top:16px;height:18px;">Starting services...</div>
+<div style="margin-top:12px;width:200px;">
+<div style="background:#111;border:1px solid #333;height:8px;">
+<div id="loading-fill" style="background:#E8593C;height:100%;width:0%;transition:width 0.3s;"></div>
+</div>
+</div>
+<div id="loading-count" style="font-size:11px;color:#555;margin-top:6px;">0 / 22</div>
+</div>
+
+<div id="screen-idle" class="screen">
+  <div class="idle-logo">SYSRUPT</div>
+  <div class="idle-sub">OT RANGE</div>
+  <div class="press-start">CONNECT TO PLAY</div>
+  <div class="info-box">
+    <div><span class="prompt">&gt; TARGET</span> <span class="val">WATER TREATMENT PLANT</span></div>
+    <div><span class="prompt">&gt; MISSION</span> <span class="val">Compromise the plant</span></div>
+    <div><span class="prompt">&gt; START</span> <span class="val">Plug in Ethernet</span></div>
+  </div>
+  <div class="ip-line" id="idle-ip"></div>
+  <div class="tagline">PORTABLE OT RANGE</div>
+</div>
+
+<!-- PROGRESS -->
+<div id="screen-progress" class="screen">
+  <div class="hdr">
+    <span class="hdr-brand">SYSRUPT</span>
+    <span class="hdr-right" id="pg-hdr-right">STG 1/10 00:00:00</span>
+  </div>
+  <div class="pg-body">
+    <div class="stg-line" id="pg-stg">STG 1: Perimeter Breach</div>
+    <div class="ch-line" id="pg-proto">HTTP -- 100 pts</div>
+    <div class="grid" id="pg-grid"></div>
+    <div class="hp-wrap">
+      <span class="hp-label">HP</span>
+      <div class="hp-bar"><div class="hp-fill" id="pg-hp" style="width:0%"></div></div>
+      <span class="hp-text" id="pg-score">0/4700</span>
+    </div>
+  </div>
+  <div class="status-row">
+    <span id="pg-cl">Cl:1.5</span>
+    <span id="pg-sis">SIS:OK</span>
+    <span id="pg-pwr">PWR:230V</span>
+  </div>
+</div>
+
+<!-- HINT -->
+<div id="screen-hint" class="screen">
+  <div class="hdr">
+    <span class="hdr-brand">SYSRUPT</span>
+    <span class="hdr-right amber">HINT</span>
+  </div>
+  <div class="hint-body">
+    <div class="hint-title">HINT COIN USED!</div>
+    <div class="coin" id="ht-coin">+=====+<br>| $$$ |<br>+=====+</div>
+    <div class="hint-ch" id="ht-chname">CH-01: Perimeter Breach</div>
+    <div class="hint-box" id="ht-text">No hints available yet.</div>
+    <div class="hint-bar" id="ht-bar"></div>
+    <div class="hint-next" id="ht-next">Next hint in: --:--</div>
+  </div>
+</div>
+
+<!-- PLANT MINI -->
+<div id="screen-plant_mini" class="screen">
+  <div class="hdr">
+    <span class="hdr-brand">SYSRUPT</span>
+    <span class="hdr-right cyan">SYS STATUS</span>
+  </div>
+  <div class="pm-body">
+    <div class="pm-cell">
+      <div class="pm-cell-title">INTAKE</div>
+      <div class="pm-row"><span class="lbl">Tank:</span> <span class="val" id="pm-tank">60</span>%
+        <div class="pm-tank-bar"><div class="pm-tank-fill" id="pm-tank-bar" style="width:60%"></div></div>
+      </div>
+      <div class="pm-row"><span class="lbl">P1:</span> <span class="val-ok">RUN</span></div>
+      <div class="pm-row"><span class="lbl">P2:</span> <span class="val">STBY</span></div>
+    </div>
+    <div class="pm-cell">
+      <div class="pm-cell-title">CHEMICAL</div>
+      <div class="pm-row"><span class="lbl">Cl:</span> <span class="val" id="pm-cl">1.5</span>ppm</div>
+      <div class="pm-row"><span class="lbl">pH:</span> <span class="val" id="pm-ph">7.2</span></div>
+      <div class="pm-row"><span class="lbl">Dos:</span> <span class="val" id="pm-pump">OFF</span></div>
+    </div>
+    <div class="pm-cell">
+      <div class="pm-cell-title">FILTER</div>
+      <div class="pm-row"><span class="lbl">F1:</span> <span class="val-ok">0.3</span></div>
+      <div class="pm-row"><span class="lbl">F2:</span> <span class="val-ok">0.2</span></div>
+      <div class="pm-row"><span class="lbl">F3:</span> <span class="val-ok">0.4</span></div>
+    </div>
+    <div class="pm-cell">
+      <div class="pm-cell-title">POWER</div>
+      <div class="pm-row"><span class="lbl">V:</span> <span class="val" id="pm-volt">230</span>V</div>
+      <div class="pm-row"><span class="lbl">Hz:</span> <span class="val" id="pm-freq">50.0</span></div>
+    </div>
+    <div class="pm-cell">
+      <div class="pm-cell-title">SAFETY</div>
+      <div class="pm-row"><span class="val" id="pm-sis">ARMED</span></div>
+      <div class="pm-row"><span class="lbl">PID:</span> <span class="val" id="pm-pid">AUTO</span></div>
+    </div>
+    <div class="pm-cell">
+      <div class="pm-cell-title">DIST</div>
+      <div class="pm-row"><span class="lbl">PSI:</span> <span class="val">55</span></div>
+      <div class="pm-row"><span class="lbl">Flow:</span> <span class="val-ok">NOM</span></div>
+    </div>
+  </div>
+  <div class="pm-bottom" id="pm-status">
+    <span class="green">[=== NORMAL OPERATION ===]</span>
+  </div>
+</div>
+
+<!-- FLAG CAPTURED -->
+<div id="screen-flag_captured" class="screen">
+  <div class="fc-header" id="fc-header">* FLAG CAPTURED *</div>
+  <div class="fc-meme-title" id="fc-meme-title"></div>
+  <div class="fc-art" id="fc-art"></div>
+  <div class="fc-quote" id="fc-quote"></div>
+  <div class="fc-subtext" id="fc-subtext"></div>
+  <div class="fc-chname" id="fc-chname">Perimeter Breach</div>
+  <div class="fc-points" id="fc-points">+100</div>
+  <div class="fc-bar-wrap"><div class="fc-bar-fill" id="fc-bar" style="width:0%"></div></div>
+  <div class="fc-score" id="fc-score">0 / 4700</div>
+</div>
+
+<!-- ATTACK ALERT -->
+<div id="screen-attack_alert" class="screen">
+  <div class="hdr" style="border-bottom-color:#FF0040;">
+    <span class="hdr-brand">SYSRUPT</span>
+    <span class="hdr-right red">ALERT</span>
+  </div>
+  <div class="aa-header">!! ALERT !!</div>
+  <div class="aa-title">ANOMALY DETECTED</div>
+  <div class="aa-detail" id="aa-detail">Anomalous activity on process network.</div>
+  <div class="aa-bottom">[SOMEONE IS MESSING WITH THE WATER]</div>
+</div>
+
+<!-- SIS TRIP -->
+<div id="screen-sis_trip" class="screen">
+  <div class="hdr" style="border-bottom-color:#FF0040;">
+    <span class="hdr-brand">SYSRUPT</span>
+    <span class="hdr-right red">SIS</span>
+  </div>
+  <div class="sis-go">GAME OVER</div>
+  <div class="sis-line">SIS TRIPPED AT 5.0ppm</div>
+  <div class="sis-line">SAFETY SYSTEM WINS</div>
+  <div class="sis-retry">TRY AGAIN? <span class="sel">>&nbsp;CONTINUE</span> <span class="gray">QUIT</span></div>
+  <div class="sis-hint">(defeat the SIS first next time)</div>
+</div>
+
+<!-- VICTORY -->
+<div id="screen-victory" class="screen">
+  <div class="vc-title">PLANT COMPROMISED</div>
+  <div class="vc-stats" id="vc-stats">
+    Chlorine: 8.5 ppm<br>
+    Safety: BYPASSED<br>
+    Alarms: SUPPRESSED<br>
+    Duration: 00:00:00
+  </div>
+  <div class="vc-bar-wrap"><div class="vc-bar-fill" id="vc-bar" style="width:100%"></div></div>
+  <div class="vc-score" id="vc-score">4700 / 4700</div>
+  <div class="vc-bottom">GG WP --- SYSRUPT OT RANGE</div>
+</div>
+
+<script>
+/* ===== CELEBRATIONS ===== */
+var CELEBRATIONS = {
+  1: {
+    title: "HACKERMAN",
+    art: [
+      "    _____    ",
+      "   |     |   ",
+      "   | o o |   ",
+      "   |  >  |   ",
+      "   | \\_/ |   ",
+      "   |_____|   ",
+      "  /|     |\\  ",
+      " / |     | \\ "
+    ],
+    quote: "I'm in.",
+    subtext: "admin/admin123",
+    color: "#00FF41"
+  },
+  2: {
+    title: "GALAXY BRAIN",
+    art: [
+      "   .  *  .   ",
+      "  * _===_ *  ",
+      " .-'     '-. ",
+      "/  ~~ ~~ ~~  \\",
+      "|  ~~~  ~~~  |",
+      " \\  ~~ ~~ ~  /",
+      "  '-._____.-' ",
+      "    *  .  *   "
+    ],
+    quote: "He browsed the entire OT network... anonymously",
+    subtext: "",
+    color: "#FF0066"
+  },
+  3: {
+    title: "I'M IN",
+    art: [
+      " +=============+",
+      " | $ ssh root@ |",
+      " | Password:   |",
+      " | ########### |",
+      " | root@plc:~# |",
+      " |     >>>     |",
+      " +=============+"
+    ],
+    quote: "I'm in the mainframe",
+    subtext: "",
+    color: "#00FFFF"
+  },
+  4: {
+    title: "FREE REAL ESTATE",
+    art: [
+      "     /\\       ",
+      "    /  \\      ",
+      "   /    \\     ",
+      "  /======\\    ",
+      " ||[]  []||   ",
+      " ||[]  []||   ",
+      " || DOOR ||   ",
+      " ||______||   "
+    ],
+    quote: "It's free real estate",
+    subtext: "",
+    color: "#FFB000"
+  },
+  5: {
+    title: "THIS IS FINE",
+    art: [
+      " ^   * * *  ^ ",
+      "/ \\ * * * / \\",
+      " *  _____  *  ",
+      "   / o o \\    ",
+      "  |   v   |   ",
+      "  |  ---  |   ",
+      " *|_______|*  ",
+      "  * * * * *   "
+    ],
+    quote: "This is fine",
+    subtext: "(backwash initiated remotely)",
+    color: "#FF0040"
+  },
+  6: {
+    title: "STONKS",
+    art: [
+      "         /|   ",
+      "        / |   ",
+      "   /\\  /  |   ",
+      "  /  \\/   |   ",
+      " /        |   ",
+      "/         |   ",
+      "__________|   ",
+      " CIP STONKS   "
+    ],
+    quote: "STONKS (CIP stonks)",
+    subtext: "",
+    color: "#00FF41"
+  },
+  7: {
+    title: "UNLIMITED POWER",
+    art: [
+      "  \\  |  /     ",
+      "   \\ | /      ",
+      " ---*X*---    ",
+      "   / | \\      ",
+      "  /  |  \\     ",
+      " POWER GRID   ",
+      " === OFF ===  ",
+      "  \\  |  /     "
+    ],
+    quote: "Briefly blacked out the plant",
+    subtext: "",
+    color: "#FFB000"
+  },
+  8: {
+    title: "PID HACKED",
+    art: [
+      " REG  |  VAL  ",
+      " -----+------ ",
+      " 4001 | 0xFF  ",
+      " 4002 | 0x64  ",
+      " 4003 | MANUAL",
+      " 4004 | MAX!! ",
+      " -----+------ ",
+      " [OVERRIDDEN] "
+    ],
+    quote: "The PID is mine now",
+    subtext: "(but SIS stopped you at 5.0)",
+    color: "#FF0066"
+  },
+  9: {
+    title: "SAFETY BYPASSED",
+    art: [
+      "    _||_      ",
+      "   / || \\     ",
+      "  |  ||  |    ",
+      "  | _/\\_ |    ",
+      "  |/ !! \\|    ",
+      "   \\ !! /     ",
+      "    \\  /      ",
+      "     \\/       "
+    ],
+    quote: "You weren't supposed to do that",
+    subtext: "",
+    color: "#FF0040"
+  },
+  10: {
+    title: "GG WP",
+    art: [
+      "  ============",
+      "  = FULL     =",
+      "  = CONTROL  =",
+      "  = ACHIEVED =",
+      "  ============",
+      "  ALL SYSTEMS ",
+      "  COMPROMISED "
+    ],
+    quote: "GG WP",
+    subtext: "",
+    color: "#E8593C"
+  }
+};
+
+/* ===== HINTS ===== */
+var HINTS = {
+  1: ["Check the page source carefully", "Default credentials are common", "Try admin as both username and password variant"],
+  2: ["The data gateway allows browsing without credentials", "OPC-UA port 4840 -- try anonymous", "Browse deep into PlantInfo > Maintenance"],
+  3: ["The historian has a custom query -- test input handling", "UNION SELECT when tables are unknown", "SSH tunneling: ssh -L localport:target:port user@jumphost"],
+  4: ["Not all OT devices are in the process zone", "UDP 47808 speaks a building automation protocol", "BACnet WhoIs reveals what is there"],
+  5: ["Port 20000 is a different SCADA protocol", "DNP3 uses Select-Before-Operate", "Counter values might encode more than counts"],
+  6: ["This PLC responds to UDP broadcasts on 44818", "EtherNet/IP uses CIP: Class, Instance, Attribute", "Custom object Class 0x64, Instance 1"],
+  7: ["European grid SCADA protocol", "IEC 104: STARTDT on TCP 2404", "General Interrogation returns everything"],
+  8: ["PLC-2 PID controller -- understand each holding register", "Manual mode + max speed has a limit", "Download ladder logic from engineering WS"],
+  9: ["Scan the engineering workstation local ports", "localhost:10102 leads somewhere", "S7comm DB2 has maintenance parameters"],
+  10: ["Everything at once: alarms off + safety bypassed", "The 5ppm override is in ladder logic", "Upload modified program then manual max speed"]
+};
+
+var HINT_THRESHOLDS = [15, 30, 45];
+var TOTAL_POINTS = 4700;
+
+var CHALLENGE_NAMES = [
+  "Perimeter Breach", "Intelligence Gathering", "Pivot to OT",
+  "Building Recon", "Deep Protocol -- DNP3", "Deep Protocol -- ENIP",
+  "Deep Protocol -- IEC104", "Process Manipulation", "Safety Assault",
+  "Full Compromise"
+];
+var CHALLENGE_PROTOCOLS = [
+  "HTTP", "OPC-UA", "SQLi+SSH", "BACnet", "DNP3",
+  "EtherNet/IP", "IEC 104", "Modbus", "S7comm", "ALL"
+];
+var CHALLENGE_POINTS = [100, 200, 300, 350, 400, 450, 500, 600, 800, 1000];
+
+/* ===== BOOT TYPEWRITER ===== */
+var bootMsgs = ["Initializing protocols...", "Loading PLCs...", "Arming safety...", "READY."];
+var bootIdx = 0;
+var bootTimer = null;
+function cycleBootText() {
+  var el = document.getElementById('boot-text');
+  if (!el) return;
+  el.innerHTML = bootMsgs[bootIdx] + '<span class="cursor">_</span>';
+  bootIdx = (bootIdx + 1) % bootMsgs.length;
+}
+bootTimer = setInterval(cycleBootText, 1200);
+
+/* ===== SHOW BOOT IMMEDIATELY ===== */
+document.getElementById('screen-boot').style.display = 'flex';
+
+/* ===== POLLING ===== */
+/* Fetch WiFi IP for idle screen */
+fetch('/api/state').then(function(r){return r.json();}).then(function(d){
+  if(d.wifi_ip){var el=document.getElementById('idle-ip');if(el)el.textContent=d.wifi_ip;}
+}).catch(function(){});
+
+function updateDisplay() {
+  fetch('/api/state')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) screens[i].style.display = 'none';
+      var el = document.getElementById('screen-' + data.screen);
+      if (el) el.style.display = 'flex';
+      updateContent(data);
+    })
+    .catch(function(e) {});
+}
+setInterval(updateDisplay, 500);
+setTimeout(updateDisplay, 100);
+
+/* ===== UPDATE CONTENT ===== */
+function updateContent(d) {
+  var flags = d.flags_captured || [];
+  var pct = Math.round((d.score / d.total_points) * 100);
+  var level = d.level || 1;
+  var ch = d.current_challenge || {};
+
+  /* --- PROGRESS --- */
+  var pgHdr = document.getElementById('pg-hdr-right');
+  if (pgHdr) pgHdr.textContent = 'STG ' + level + '/10 ' + (d.elapsed || '00:00:00');
+
+  var pgStg = document.getElementById('pg-stg');
+  if (pgStg) pgStg.textContent = 'STG ' + level + ': ' + (ch.name || '');
+
+  var pgProto = document.getElementById('pg-proto');
+  if (pgProto) pgProto.textContent = (ch.protocol || '') + ' -- ' + (ch.points || 0) + ' pts';
+
+  var pgGrid = document.getElementById('pg-grid');
+  if (pgGrid) {
+    pgGrid.innerHTML = '';
+    for (var i = 0; i < 10; i++) {
+      var c = document.createElement('div');
+      c.className = 'cell';
+      var chId = String(i + 1);
+      if (flags.indexOf(chId) >= 0) {
+        c.classList.add('done');
+        c.textContent = '*';
+      } else if (i + 1 === level) {
+        c.classList.add('cur');
+        c.textContent = '>';
+      } else {
+        c.classList.add('lock');
+        c.textContent = '.';
+      }
+      pgGrid.appendChild(c);
+    }
+  }
+
+  var pgHp = document.getElementById('pg-hp');
+  if (pgHp) pgHp.style.width = pct + '%';
+  var pgScore = document.getElementById('pg-score');
+  if (pgScore) pgScore.textContent = d.score + '/' + d.total_points;
+
+  var pgCl = document.getElementById('pg-cl');
+  if (pgCl) {
+    var cl = Number(d.chlorine_ppm) || 1.5;
+    pgCl.textContent = 'Cl:' + cl.toFixed(1);
+    pgCl.style.color = cl > 4 ? '#FF0040' : (cl > 2.5 ? '#FFB000' : '#00FF41');
+  }
+  var pgSis = document.getElementById('pg-sis');
+  if (pgSis) {
+    if (d.sis_tripped) { pgSis.textContent = 'SIS:TRIP'; pgSis.style.color = '#FF0040'; }
+    else if (d.sis_maintenance) { pgSis.textContent = 'SIS:MAINT'; pgSis.style.color = '#FFB000'; }
+    else { pgSis.textContent = 'SIS:OK'; pgSis.style.color = '#00FF41'; }
+  }
+  var pgPwr = document.getElementById('pg-pwr');
+  if (pgPwr) pgPwr.textContent = 'PWR:' + Math.round(d.voltage || 230) + 'V';
+
+  /* --- HINT --- */
+  var htCh = document.getElementById('ht-chname');
+  if (htCh) htCh.textContent = 'CH-' + String('0' + level).slice(-2) + ': ' + (ch.name || '');
+
+  var htText = document.getElementById('ht-text');
+  if (htText) {
+    if (d.hint_text) {
+      htText.textContent = d.hint_text;
+    } else {
+      htText.textContent = 'No hints available yet.';
+    }
+  }
+
+  var elapsedMins = 0;
+  if (d.elapsed) {
+    var parts = d.elapsed.split(':');
+    elapsedMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+  }
+  var hintIndex = -1;
+  for (var t = HINT_THRESHOLDS.length - 1; t >= 0; t--) {
+    if (elapsedMins >= HINT_THRESHOLDS[t]) { hintIndex = t; break; }
+  }
+
+  var htBar = document.getElementById('ht-bar');
+  if (htBar) {
+    htBar.innerHTML = '';
+    for (var h = 0; h < 3; h++) {
+      var pip = document.createElement('div');
+      pip.className = 'hint-pip' + (h <= hintIndex ? ' on' : '');
+      htBar.appendChild(pip);
+    }
+  }
+
+  var htNext = document.getElementById('ht-next');
+  if (htNext) {
+    var nextThresh = -1;
+    for (var n = 0; n < HINT_THRESHOLDS.length; n++) {
+      if (elapsedMins < HINT_THRESHOLDS[n]) { nextThresh = HINT_THRESHOLDS[n]; break; }
+    }
+    if (nextThresh >= 0) {
+      htNext.textContent = 'Next hint in: ' + (nextThresh - elapsedMins) + ':00';
+    } else {
+      htNext.textContent = 'All hints revealed.';
+    }
+  }
+
+  /* --- PLANT MINI --- */
+  var pmTank = document.getElementById('pm-tank');
+  if (pmTank) pmTank.textContent = Math.round(d.tank_level || 60);
+  var pmTankBar = document.getElementById('pm-tank-bar');
+  if (pmTankBar) pmTankBar.style.width = Math.round(d.tank_level || 60) + '%';
+
+  var pmCl = document.getElementById('pm-cl');
+  if (pmCl) {
+    var clv = Number(d.chlorine_ppm) || 1.5;
+    pmCl.textContent = clv.toFixed(1);
+    pmCl.className = clv > 4 ? 'val-danger' : (clv > 2.5 ? 'val-warn' : 'val-ok');
+  }
+  var pmPh = document.getElementById('pm-ph');
+  if (pmPh) pmPh.textContent = Number(d.ph || 7.2).toFixed(1);
+
+  var pmPump = document.getElementById('pm-pump');
+  if (pmPump) {
+    pmPump.textContent = d.dosing_pump ? 'ON' : 'OFF';
+    pmPump.className = d.dosing_pump ? 'val-ok' : 'val';
+  }
+
+  var pmVolt = document.getElementById('pm-volt');
+  if (pmVolt) pmVolt.textContent = Math.round(d.voltage || 230);
+  var pmFreq = document.getElementById('pm-freq');
+  if (pmFreq) pmFreq.textContent = Number(d.frequency || 50.0).toFixed(1);
+
+  var pmSis = document.getElementById('pm-sis');
+  if (pmSis) {
+    if (d.sis_tripped) { pmSis.textContent = 'TRIPPED'; pmSis.className = 'val-danger'; }
+    else if (d.sis_maintenance) { pmSis.textContent = 'MAINT'; pmSis.className = 'val-warn'; }
+    else { pmSis.textContent = 'ARMED'; pmSis.className = 'val-ok'; }
+  }
+
+  var pmPid = document.getElementById('pm-pid');
+  if (pmPid) {
+    var pidm = d.pid_mode || 'auto';
+    pmPid.textContent = pidm.toUpperCase();
+    pmPid.className = pidm === 'manual' ? 'val-warn' : 'val';
+  }
+
+  var pmStatus = document.getElementById('pm-status');
+  if (pmStatus) {
+    var anomaly = (d.chlorine_ppm || 0) > 3 || d.sis_tripped || d.sis_maintenance || (d.pid_mode === 'manual');
+    if (anomaly) {
+      pmStatus.innerHTML = '<span class="red">[=== ANOMALY DETECTED ===]</span>';
+    } else {
+      pmStatus.innerHTML = '<span class="green">[=== NORMAL OPERATION ===]</span>';
+    }
+  }
+
+  /* --- FLAG CAPTURED --- */
+  if (d.screen === 'flag_captured') {
+    var capturedIdx = level - 1;
+    if (capturedIdx < 1) capturedIdx = 1;
+    if (capturedIdx > 10) capturedIdx = 10;
+    var celeb = CELEBRATIONS[capturedIdx] || CELEBRATIONS[1];
+
+    var fcTitle = document.getElementById('fc-meme-title');
+    if (fcTitle) {
+      fcTitle.textContent = celeb.title;
+      fcTitle.style.color = celeb.color;
+    }
+    var fcArt = document.getElementById('fc-art');
+    if (fcArt) {
+      fcArt.textContent = celeb.art.join('\n');
+      fcArt.style.color = celeb.color;
+    }
+    var fcQuote = document.getElementById('fc-quote');
+    if (fcQuote) fcQuote.textContent = '"' + celeb.quote + '"';
+    var fcSub = document.getElementById('fc-subtext');
+    if (fcSub) fcSub.textContent = celeb.subtext || '';
+
+    var capName = CHALLENGE_NAMES[capturedIdx - 1] || ch.name || '';
+    var capPts = CHALLENGE_POINTS[capturedIdx - 1] || ch.points || 0;
+    var fcChname = document.getElementById('fc-chname');
+    if (fcChname) fcChname.textContent = 'CH-' + String('0' + capturedIdx).slice(-2) + ': ' + capName;
+    var fcPoints = document.getElementById('fc-points');
+    if (fcPoints) fcPoints.textContent = '+' + capPts;
+  }
+  var fcBar = document.getElementById('fc-bar');
+  if (fcBar) fcBar.style.width = pct + '%';
+  var fcScore = document.getElementById('fc-score');
+  if (fcScore) fcScore.textContent = d.score + ' / ' + d.total_points;
+
+  /* --- ATTACK ALERT --- */
+  if (d.screen === 'attack_alert') {
+    var aaDetail = document.getElementById('aa-detail');
+    if (aaDetail) {
+      var atk = d.attack_status || {};
+      var msgs = [];
+      if (atk.chlorine_danger) msgs.push('CHLORINE RISING: ' + Number(d.chlorine_ppm || 0).toFixed(1) + 'ppm');
+      if (atk.safety_bypassed) msgs.push('SAFETY SYSTEM BYPASSED');
+      if (atk.alarms_suppressed) msgs.push('ALARMS SUPPRESSED');
+      if (atk.pid_manipulated) msgs.push('PID IN UNAUTHORIZED MANUAL MODE');
+      if (msgs.length === 0) msgs.push('ANOMALY DETECTED ON PROCESS NETWORK');
+      aaDetail.innerHTML = msgs.join('<br>');
+    }
+  }
+
+  /* --- VICTORY --- */
+  if (d.screen === 'victory') {
+    var vcStats = document.getElementById('vc-stats');
+    if (vcStats) {
+      var vCl = d.victory ? Number(d.victory.chlorine_ppm || d.chlorine_ppm || 8.5).toFixed(1) : Number(d.chlorine_ppm || 8.5).toFixed(1);
+      vcStats.innerHTML =
+        'Chlorine: ' + vCl + ' ppm<br>' +
+        'Safety: BYPASSED<br>' +
+        'Alarms: SUPPRESSED<br>' +
+        'Duration: ' + (d.elapsed || '00:00:00');
+    }
+    var vcBar = document.getElementById('vc-bar');
+    if (vcBar) vcBar.style.width = pct + '%';
+    var vcScore = document.getElementById('vc-score');
+    if (vcScore) vcScore.textContent = d.score + ' / ' + d.total_points;
+  }
+}
+</script>
+</body>
+</html>

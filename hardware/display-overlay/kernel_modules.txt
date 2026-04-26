@@ -1,0 +1,14 @@
+# Display-related kernel modules (from lsmod)
+drm_display_helper     49152  1 vc4
+ili9341                49152  11
+drm_mipi_dbi           49152  1 ili9341
+drm_dma_helper         49152  3 ili9341,vc4
+drm_shmem_helper       49152  1 v3d
+drm_kms_helper        245760  5 ili9341,drm_dma_helper,vc4,drm_mipi_dbi,drm_shmem_helper
+spidev                 49152  0
+drm                   704512  33 gpu_sched,ili9341,drm_kms_helper,drm_dma_helper,v3d,vc4,drm_mipi_dbi,drm_shmem_helper,drm_display_helper
+spi_bcm2835            49152  0
+drm_panel_orientation_quirks    65536  1 drm
+backlight              49152  3 ili9341,drm_kms_helper,drm
+spi_dw_mmio            49152  0
+spi_dw                 49152  1 spi_dw_mmio

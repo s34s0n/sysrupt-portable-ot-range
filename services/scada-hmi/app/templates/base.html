@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SCADA HMI{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="hdr">
+            <span class="brand">CWA SCADA &mdash; Water Treatment Plant</span>
+            <nav>
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}">Process</a>
+                <a href="{{ url_for('distribution') }}">Distribution</a>
+                <a href="{{ url_for('power') }}">Power</a>
+                <a href="{{ url_for('alarms') }}">Alarms</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% endif %}
+            </nav>
+            <span class="clock" id="clock"></span>
+        </div>
+    </header>
+    {% block content %}{% endblock %}
+    {% block scripts %}{% endblock %}
+    <script>
+    function updateClock(){
+        var d=new Date();
+        var el=document.getElementById('clock');
+        if(el) el.textContent=d.toLocaleString();
+    }
+    setInterval(updateClock,1000);
+    updateClock();
+    </script>
+</body>
+</html>

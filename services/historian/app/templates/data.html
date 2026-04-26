@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Data Browser - Historian{% endblock %}
+{% block content %}
+<h2>Data Browser</h2>
+<p>Page {{ page }} of {{ pages }}</p>
+<table>
+    <thead>
+        <tr><th>ID</th><th>Timestamp</th><th>Source</th><th>Tank</th><th>Cl</th><th>pH</th><th>Temp</th><th>Flow</th><th>Filter DP</th><th>Dist Pressure</th></tr>
+    </thead>
+    <tbody>
+    {% for r in rows %}
+        <tr>
+            <td>{{ r['id'] }}</td>
+            <td>{{ r['timestamp'] }}</td>
+            <td>{{ r['source'] }}</td>
+            <td>{{ r['tank_level'] }}</td>
+            <td>{{ r['chlorine_ppm'] }}</td>
+            <td>{{ r['ph'] }}</td>
+            <td>{{ r['temperature'] }}</td>
+            <td>{{ r['flow_rate'] }}</td>
+            <td>{{ r['filter_dp'] }}</td>
+            <td>{{ r['distribution_pressure'] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="pagination">
+    {% if page > 1 %}<a href="?page={{ page - 1 }}">&laquo; Previous</a>{% endif %}
+    {% if page < pages %}<a href="?page={{ page + 1 }}">Next &raquo;</a>{% endif %}
+</div>
+{% endblock %}

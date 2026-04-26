@@ -1,0 +1,59 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Editors / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs / runtime
+*.log
+logs/
+dump.rdb
+*.pid
+
+# SD card / hardware artifacts
+*.img
+*.img.xz
+*.img.gz
+*.iso
+
+# Local secrets / config
+.env
+.env.local
+secrets/
+*.key
+*.pem
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Jekyll (docs site)
+docs/_site/
+docs/.jekyll-cache/
+docs/.bundle/
+docs/vendor/
+
+# Node (if any future tooling)
+node_modules/
+
+# Build artifacts
+build/
+dist/

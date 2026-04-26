@@ -1,0 +1,7 @@
+service: scada-hmi
+name: SCADA HMI
+namespace: scada
+bind: 0.0.0.0
+port: 8080
+redis_key: physics:plant_state
+description: SCADA Human-Machine Interface for water treatment plant

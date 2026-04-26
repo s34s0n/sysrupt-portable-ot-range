@@ -1,0 +1,25 @@
+challenge:
+  id: 5
+  name: "deep_protocol_dnp3"
+  category: "protocol"
+  difficulty: "hard"
+  points: 400
+  zone: "process"
+  description: "Interact with the filtration PLC using DNP3 protocol."
+  flag:
+    value: "SYSRUPT{dnp3_m4st3r_0p3r4t0r}"
+    location: "PLC-3 filtration controller"
+  hints:
+    - delay_minutes: 15
+      text: "The filtration PLC speaks DNP3, not Modbus."
+    - delay_minutes: 30
+      text: "DNP3 uses a master/outstation model. You need to act as a master."
+    - delay_minutes: 45
+      text: "Read the binary and analog data from the DNP3 outstation."
+  solution:
+    summary: "Connect to the filtration PLC via DNP3 and read process values."
+    tools: ["dnp3-tools", "python-dnp3"]
+    steps:
+      - "Connect to PLC-3 on port 20000"
+      - "Send DNP3 read requests as master station"
+      - "Parse the response to find filter status data"

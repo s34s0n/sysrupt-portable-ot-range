@@ -1,0 +1,30 @@
+# PLC-5 Power Feed - IEC 60870-5-104
+name: plc-power
+display_name: PLC-5 Power Feed
+protocol: iec-60870-5-104
+port: 2404
+namespace: svc-plc-power
+ip: 10.0.4.105
+common_address: 1
+
+points:
+  single_points:  # M_SP_NA_1
+    - { ioa: 100, name: main_breaker }
+    - { ioa: 101, name: bus_tie }
+    - { ioa: 102, name: feeder_a }
+    - { ioa: 103, name: feeder_b }
+    - { ioa: 104, name: earth_switch }
+
+  measurements:  # M_ME_NC_1
+    - { ioa: 300, name: voltage_v }
+    - { ioa: 301, name: current_a }
+    - { ioa: 302, name: p_active_w }
+    - { ioa: 303, name: p_reactive_var }
+    - { ioa: 304, name: frequency_hz }
+    - { ioa: 305, name: power_factor }
+
+  commands:  # C_SC_NA_1
+    - { ioa: 400, name: main_breaker_cmd }
+    - { ioa: 401, name: bus_tie_cmd }
+    - { ioa: 402, name: feeder_a_cmd }
+    - { ioa: 403, name: feeder_b_cmd }

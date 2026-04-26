@@ -1,0 +1,25 @@
+challenge:
+  id: 4
+  name: "building_recon_bacnet"
+  category: "protocol"
+  difficulty: "medium"
+  points: 350
+  zone: "corp"
+  description: "Discover and enumerate the Building Management System via BACnet."
+  flag:
+    value: "SYSRUPT{b4cn3t_bu1ld1ng_m4n4g3m3nt}"
+    location: "BACnet device on corporate network"
+  hints:
+    - delay_minutes: 15
+      text: "BACnet devices listen on UDP port 47808."
+    - delay_minutes: 30
+      text: "The BMS is on the corporate network, not behind the firewall."
+    - delay_minutes: 45
+      text: "Use a BACnet discovery tool like BAC0 or bacnet-tools to enumerate."
+  solution:
+    summary: "Discover the BACnet BMS on the corporate network and read device properties."
+    tools: ["BAC0", "bacnet-tools", "Wireshark"]
+    steps:
+      - "Scan the corporate network for BACnet devices (UDP 47808)"
+      - "Enumerate analog and binary input objects"
+      - "Read device properties to find building management data"

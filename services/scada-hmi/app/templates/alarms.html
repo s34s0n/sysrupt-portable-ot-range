@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Alarms - SCADA HMI{% endblock %}
+{% block content %}
+<div class="panel" style="margin:15px;">
+    <h3>Alarm Log</h3>
+    <table class="alarm-table">
+        <thead><tr><th>Time</th><th>Level</th><th>Message</th></tr></thead>
+        <tbody>
+        {% for a in alarms %}
+            <tr class="alarm-{{ a.level|lower }}">
+                <td>{{ a.time }}</td>
+                <td>{{ a.level }}</td>
+                <td>{{ a.message }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="3" style="text-align:center;color:#888;">No alarms recorded</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

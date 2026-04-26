@@ -1,0 +1,7 @@
+service: jumphost
+name: Jump Host
+namespace: dmz
+ip: 10.0.2.20
+ssh_port: 22
+user: maintenance
+description: DMZ jump host for OT network access

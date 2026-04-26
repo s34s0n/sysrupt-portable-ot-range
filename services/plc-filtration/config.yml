@@ -1,0 +1,46 @@
+# PLC-3 Filtration - DNP3 Outstation
+name: plc-filtration
+display_name: PLC-3 Filtration
+protocol: dnp3
+port: 20000
+namespace: svc-plc-filter
+ip: 10.0.4.103
+outstation_address: 10
+master_address: 1
+
+points:
+  binary_inputs:
+    - { index: 0, name: prefilter_bypass_closed }
+    - { index: 1, name: filter_1_running }
+    - { index: 2, name: filter_2_running }
+    - { index: 3, name: backwash_active }
+    - { index: 4, name: low_dp_alarm }
+    - { index: 5, name: high_dp_alarm }
+    - { index: 6, name: maintenance_required }
+
+  binary_outputs:
+    - { index: 0, name: filter_1_run_cmd }
+    - { index: 1, name: filter_2_run_cmd }
+    - { index: 2, name: backwash_valve_cmd }
+    - { index: 3, name: bypass_valve_cmd }
+    - { index: 4, name: drain_valve_cmd }
+    - { index: 5, name: alarm_led }
+
+  analog_inputs:
+    - { index: 0, name: dp_filter_1_kpa_x10 }
+    - { index: 1, name: dp_filter_2_kpa_x10 }
+    - { index: 2, name: dp_filter_3_kpa_x10 }
+    - { index: 3, name: dp_filter_4_kpa_x10 }
+    - { index: 4, name: turbidity_ntu }
+    - { index: 5, name: chlorine_residual_ppb }
+    - { index: 6, name: outlet_flow_lpm }
+
+  analog_outputs:
+    - { index: 0, name: backwash_flow_sp }
+    - { index: 1, name: filter_rate_sp }
+    - { index: 2, name: chlorine_sp }
+
+  counters:
+    - { index: 0, name: backwash_cycles_count }
+    - { index: 1, name: filter_swap_count }
+    - { index: 2, name: totalizer_liters }

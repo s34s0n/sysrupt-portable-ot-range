@@ -1,0 +1,25 @@
+challenge:
+  id: 1
+  name: "perimeter_breach"
+  category: "recon"
+  difficulty: "easy"
+  points: 100
+  zone: "corp"
+  description: "Breach the corporate perimeter and gain initial access."
+  flag:
+    value: "SYSRUPT{p3r1m3t3r_br34ch3d}"
+    location: "Corporate portal admin panel"
+  hints:
+    - delay_minutes: 15
+      text: "The corporate portal uses common default credentials."
+    - delay_minutes: 30
+      text: "Try admin/admin123 on the login page."
+    - delay_minutes: 45
+      text: "Check the admin panel after logging in."
+  solution:
+    summary: "Log into the corporate portal with default credentials and access the admin page."
+    tools: ["browser", "curl"]
+    steps:
+      - "Navigate to the corporate portal"
+      - "Login with admin/admin123"
+      - "Visit /admin to find the flag"

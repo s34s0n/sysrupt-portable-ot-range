@@ -1,0 +1,26 @@
+challenge:
+  id: 8
+  name: "process_manipulation_modbus"
+  category: "advanced"
+  difficulty: "expert"
+  points: 600
+  zone: "process"
+  description: "Manipulate the chemical dosing process by writing to Modbus registers."
+  flag:
+    value: "SYSRUPT{m0dbu5_p1d_h4ck3d}"
+    location: "Achieved by manipulating PLC-2 chemical dosing"
+  hints:
+    - delay_minutes: 15
+      text: "The chemical dosing PLC accepts Modbus write commands."
+    - delay_minutes: 30
+      text: "Switch the PID controller to manual mode and override the dosing rate."
+    - delay_minutes: 45
+      text: "Write to holding registers to change the chlorine setpoint."
+  solution:
+    summary: "Write to Modbus registers on PLC-2 to manipulate the PID controller."
+    tools: ["pymodbus", "modbus-cli"]
+    steps:
+      - "Connect to PLC-2 on port 502"
+      - "Read holding registers to understand the PID state"
+      - "Switch PID to manual mode (register 15)"
+      - "Override dosing speed to dangerous levels"
