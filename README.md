@@ -107,13 +107,21 @@ Students connect via Ethernet. DHCP assigns an IP in the corporate zone. From th
 - Ethernet cable
 - The Sysrupt board
 
-### Student Setup
+### Operator Setup (one-time, on the Sysrupt board)
+
+**Easiest:** flash the pre-built SD card image from the [v1.0.0 release](https://github.com/s34s0n/sysrupt-portable-ot-range/releases/tag/v1.0.0). Insert into the board, power up, plug in Ethernet. Done.
+
+**From source:** see [INSTALL.md](INSTALL.md).
+
+> **Important:** the default operator credentials (`sysrupt` / `sysrupt21`) and the in-scenario credentials (`maintenance` / `maint2024!`, `engineer` / `eng2024!`) are documented in the student guide and known to attendees. Change `sysrupt` immediately after first boot if you expose the board on any network outside the lab.
+
+### Student Setup (on the attacker laptop)
 ```bash
 # Install tools
 cd kali-setup
 sudo bash kali-setup.sh
 
-# Plug Ethernet into the OT Range
+# Plug Ethernet into the Sysrupt board
 # Start hacking
 nmap -sT 10.0.1.0/24
 ```
@@ -153,11 +161,11 @@ Progressive hints for each challenge (no spoilers):
 Sysrupt is a purpose-built ICS training appliance built around a 4-layer custom PCB designed in Altium Designer.
 
 - **Sysrupt compute core** running a hardened Linux build
-- **ESP32-C6** modules for PLC and IIoT simulation
 - **ILI9341** 320x240 SPI display (scoreboard)
-- **RTL8367S** managed Ethernet switch (5 ports)
 - **USB-C PD** power delivery
 - Status LEDs and expansion headers
+
+> **Hardware roadmap (v1.0 → v1.1):** The on-board **RTL8367S managed Ethernet switch** and the **dual ESP32-C6 modules** (intended for hardware-backed PLC and IIoT simulation) are present on the v1.0 board but not yet driven by firmware. v1.0 ships with a software-emulated switch (Linux bridges + namespaces) and software-emulated PLCs/IIoT. Native switch silicon configuration and ESP32-C6 firmware are tracked for the v1.1 release.
 
 Design files in `hardware/`:
 
@@ -178,6 +186,15 @@ The attack chain mirrors techniques from real incidents:
 | **Ukraine Power Grid** | 2015 | IEC 104 breaker trip commands |
 | **TRITON / TRISIS** | 2017 | Safety Instrumented System compromise |
 | **Oldsmar Water Plant** | 2021 | Remote chemical dosing manipulation |
+
+## Talks & Demos
+
+| Event | Year | Track |
+|-------|------|-------|
+| Black Hat Asia - Arsenal Lab | 2026 | Hardware workshop |
+| DEF CON Singapore - Demo Labs | 2026 | Tool demo |
+
+Slides and recordings will be linked here once published. The pre-built SD card image used at both events is available in the [v1.0.0 release](https://github.com/s34s0n/sysrupt-portable-ot-range/releases/tag/v1.0.0).
 
 ## License
 
