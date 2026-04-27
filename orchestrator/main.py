@@ -16,8 +16,13 @@ import redis
 # Constants
 # ---------------------------------------------------------------------------
 
-PYPATH = "/home/sysrupt/.local/lib/python3.13/site-packages"
-PROJECT_DIR = "/home/sysrupt/sysrupt-ot-range"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.environ.get("OT_RANGE_PROJECT_DIR") or os.path.dirname(_HERE)
+
+# Detect user site-packages dynamically; fallback to a sensible default.
+import site as _site
+PYPATH = os.environ.get("OT_RANGE_PYPATH") or _site.getusersitepackages() or "/usr/lib/python3/dist-packages"
+
 PID_DIR = "/var/run/ot-range"
 PID_FILE = os.path.join(PID_DIR, "pids.json")
 LOG_DIR = "/var/log/ot-range"

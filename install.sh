@@ -34,12 +34,15 @@ INSTALL_USER="$(stat -c '%U' "$SCRIPT_DIR" 2>/dev/null || stat -f '%Su' "$SCRIPT
 # Step 1: System packages
 # --------------------------------------------------------------------------
 echo "[1/14] Installing system packages..."
+# DEBIAN_FRONTEND=noninteractive prevents debconf from hanging on prompts
+# (notably iptables-persistent asks "save current rules?" which silently fails in -qq mode).
+export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y -qq \
+apt-get install -y -qq -o Dpkg::Options::='--force-confnew' \
     python3-pip python3-venv \
     redis-server \
     dnsmasq \
-    iptables-persistent \
+    iptables iptables-persistent \
     nmap \
     chromium-browser chromium \
     firefox \
@@ -48,12 +51,21 @@ apt-get install -y -qq \
     libsnap7-dev libsnap7-1 \
     device-tree-compiler \
     git build-essential cmake \
-    2>/dev/null || true
+    || echo "[WARN] Some apt packages failed - continuing"
 
 # Fall back to firefox-esr on distros without the rpt firefox package
 if ! command -v firefox >/dev/null 2>&1; then
-    apt-get install -y -qq firefox-esr 2>/dev/null || true
+    apt-get install -y -qq firefox-esr || true
 fi
+
+# Sanity check: services that MUST exist for orchestrator to work
+for cmd in iptables redis-server dnsmasq; do
+    if ! command -v $cmd >/dev/null 2>&1; then
+        echo "[ERROR] Required package missing: $cmd"
+        echo "        Re-run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y $cmd"
+        exit 1
+    fi
+done
 
 # --------------------------------------------------------------------------
 # Step 2: Python dependencies
@@ -199,7 +211,9 @@ else
 fi
 
 # Add PYTHONPATH to lab user profiles (needed for c104, snap7, etc. via SSH)
-PYPATH_LINE='export PYTHONPATH=/home/sysrupt/.local/lib/python3.13/site-packages:/home/sysrupt/sysrupt-ot-range'
+USER_HOME="$(eval echo ~$INSTALL_USER)"
+SITE_PKGS="$(sudo -u "$INSTALL_USER" python3 -c 'import site; print(site.USER_SITE)' 2>/dev/null || echo "$USER_HOME/.local/lib/python3/site-packages")"
+PYPATH_LINE="export PYTHONPATH=$SITE_PKGS:$SCRIPT_DIR"
 for u in engineer maintenance; do
     BASHRC="/home/$u/.bashrc"
     if [ -f "$BASHRC" ]; then
@@ -228,12 +242,18 @@ echo "  Directories created, owned by $INSTALL_USER"
 # --------------------------------------------------------------------------
 echo "[13/14] Installing systemd services..."
 
-# Network service
-cp "$SCRIPT_DIR/config/network/ot-range-network.service" /etc/systemd/system/
-echo "  Installed ot-range-network.service"
+# Detect the actual python3 site-packages path for the install user (varies by Python version)
+USER_HOME="$(eval echo ~$INSTALL_USER)"
+PY_SITE="$(sudo -u "$INSTALL_USER" python3 -c 'import site; print(site.USER_SITE)' 2>/dev/null || echo "$USER_HOME/.local/lib/python3/site-packages")"
 
-# Main orchestrator service
-cat > /etc/systemd/system/ot-range.service << 'SVCEOF'
+# Network service - rewrite paths from repo template to actual install location
+sed -e "s|/home/sysrupt/sysrupt-ot-range|$SCRIPT_DIR|g" \
+    "$SCRIPT_DIR/config/network/ot-range-network.service" \
+    > /etc/systemd/system/ot-range-network.service
+echo "  Installed ot-range-network.service (paths -> $SCRIPT_DIR)"
+
+# Main orchestrator service - templated with actual paths
+cat > /etc/systemd/system/ot-range.service << SVCEOF
 [Unit]
 Description=Sysrupt OT Range Orchestrator
 After=ot-range-network.service redis-server.service
@@ -244,8 +264,8 @@ Wants=redis-server.service
 Type=oneshot
 RemainAfterExit=yes
 TimeoutStartSec=300
-WorkingDirectory=/home/sysrupt/sysrupt-ot-range
-Environment=PYTHONPATH=/home/sysrupt/.local/lib/python3.13/site-packages:/home/sysrupt/sysrupt-ot-range
+WorkingDirectory=$SCRIPT_DIR
+Environment=PYTHONPATH=$PY_SITE:$SCRIPT_DIR
 ExecStart=/usr/bin/python3 -m orchestrator start
 ExecStop=/usr/bin/python3 -m orchestrator stop
 StandardOutput=journal
@@ -254,7 +274,7 @@ StandardError=journal
 [Install]
 WantedBy=multi-user.target
 SVCEOF
-echo "  Installed ot-range.service"
+echo "  Installed ot-range.service (paths -> $SCRIPT_DIR)"
 
 systemctl daemon-reload
 systemctl enable ot-range-network.service 2>/dev/null || true

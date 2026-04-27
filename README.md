@@ -93,7 +93,7 @@ Everything runs on a single Sysrupt appliance:
 
 - **16 Linux network namespaces** for zone isolation
 - **5 bridge networks** with iptables firewall rules
-- **23 services** (PLCs, web apps, SSH servers, physics engine, IDS)
+- **20 background services** (PLCs, web apps, SSH servers, physics engine, IDS)
 - **Physics engine** simulating chlorine dosing, tank levels, power grid
 - **SCADA HMI** with live gauges: pressure, chlorine, breaker states
 - **CTF engine** monitoring Redis for auto-detection

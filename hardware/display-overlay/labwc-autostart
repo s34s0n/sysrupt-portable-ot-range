@@ -5,6 +5,20 @@ swaybg -c "#000000" 2>/dev/null &
 # Hide cursor immediately
 DISPLAY=:0 unclutter -idle 0 -root &
 
-# Wait for display server, then launch Firefox
-sleep 15
-MOZ_ENABLE_WAYLAND=1 firefox --kiosk http://localhost:5555 &
+# Wait for the scoreboard service to actually be reachable before launching
+# Firefox. Otherwise Firefox loads "Unable to connect" and stays stuck there
+# until manually refreshed (no auto-retry on connection failure).
+(
+  for i in $(seq 1 120); do
+    if curl -sf -o /dev/null --max-time 2 http://localhost:5555/; then
+      break
+    fi
+    sleep 1
+  done
+
+  # Respawn loop: if Firefox crashes mid-demo, bring it back automatically.
+  while true; do
+    MOZ_ENABLE_WAYLAND=1 firefox --kiosk http://localhost:5555
+    sleep 3
+  done
+) &
