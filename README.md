@@ -11,6 +11,7 @@ A self-contained ICS/SCADA cyber range: 5 Purdue zones, 8 real industrial protoc
 [![Stars](https://img.shields.io/github/stars/s34s0n/sysrupt-portable-ot-range?style=for-the-badge&color=f59e0b)](https://github.com/s34s0n/sysrupt-portable-ot-range/stargazers)
 
 [![Black Hat Asia 2026](https://img.shields.io/badge/Black%20Hat%20Asia%202026-Arsenal%20Lab-111111?style=flat-square)](#-talks--demos)
+[![Black Hat India 2026](https://img.shields.io/badge/Black%20Hat%20India%202026-Arsenal-111111?style=flat-square)](#-talks--demos)
 [![DEF CON Singapore 2026](https://img.shields.io/badge/DEF%20CON%20Singapore%202026-Demo%20Labs-111111?style=flat-square)](#-talks--demos)
 [![IEC 62443](https://img.shields.io/badge/Model-IEC%2062443%20Purdue-16a34a?style=flat-square)](#-architecture)
 [![Cloud](https://img.shields.io/badge/Cloud-Zero%20Dependency-7c3aed?style=flat-square)](#-under-the-hood)
@@ -19,7 +20,7 @@ A self-contained ICS/SCADA cyber range: 5 Purdue zones, 8 real industrial protoc
 
 <br>
 
-<img src="images/sysrupt-board.png" alt="Sysrupt Board" width="720">
+<img src="images/sysrupt-board-cropped.png" alt="Sysrupt Board" width="560">
 
 </div>
 
@@ -208,9 +209,10 @@ The on-board **RTL8367S managed switch** and **dual ESP32-C6 modules** (for hard
 | Event | Year | Track |
 |---|:---:|---|
 | **Black Hat Asia**: Arsenal Lab | 2026 | Hardware workshop |
+| **Black Hat India**: Arsenal | 2026 | Tool demo |
 | **DEF CON Singapore**: Demo Labs | 2026 | Tool demo |
 
-Slides and recordings will be linked here once published. The SD image used at both events is in the [v1.0.0 release](https://github.com/s34s0n/sysrupt-portable-ot-range/releases/tag/v1.0.0).
+Slides and recordings will be linked here once published. The SD image used at these events is in the [v1.0.0 release](https://github.com/s34s0n/sysrupt-portable-ot-range/releases/tag/v1.0.0).
 
 ## 📜 License
 
